@@ -1,12 +1,14 @@
 # Nixpacks configuration for Railway deployment
 
 [phases.setup]
-nixPkgs = ["nodejs_20"]
+nixPkgs = ["nodejs_20", "npm"]
 
 [phases.install]
+dependsOn = ["setup"]
 cmds = ["npm ci || npm install"]
 
 [phases.build]
+dependsOn = ["install"]
 cmds = ["npm run build"]
 
 [start]
