@@ -1,0 +1,79 @@
+File: C:\Users\home\Desktop\backend platform\src\modules\cache\redis\config\redis.config.js
+Content:
+import Redis from 'ioredis';
+import { redis } from '../../../../config/database.config.js';
+
+const redisClient = new Redis({
+  host: redis.host,
+  port: redis.port,
+  password: redis.password,
+  db: redis.db,
+});
+
+redisClient.on('connect', () => {
+  console.log('Connected to Redis successfully.');
+});
+
+redisClient.on('error', (err) => {
+  console.error('Redis connection error:', err);
+});
+
+export default redisClient;
+
+||------------------------------------------------------||
+
+File: C:\Users\home\Desktop\backend platform\src\modules\cache\redis\index.js
+Content:
+import redisClient from './config/redis.config.js';
+import UserCacheService from './services/UserCache.service.js';
+import ProductCacheService from './services/ProductCache.service.js';
+
+export { redisClient, UserCacheService, ProductCacheService };
+
+||------------------------------------------------------||
+
+File: C:\Users\home\Desktop\backend platform\src\modules\cache\redis\repositories\UserCache.repository.js
+Content:
+import redisClient from '../config/redis.config.js';
+
+class UserCacheRepository {
+  async setUser(userId, userData, ttl = 3600) {
+    await redisClient.set(`user:${userId}`, JSON.stringify(userData), 'EX', ttl);
+  }
+
+  async getUser(userId) {
+    const userData = await redisClient.get(`user:${userId}`);
+    return userData ? JSON.parse(userData) : null;
+  }
+
+  async deleteUser(userId) {
+    await redisClient.del(`user:${userId}`);
+  }
+}
+
+export default new UserCacheRepository();
+
+||------------------------------------------------------||
+
+File: C:\Users\home\Desktop\backend platform\src\modules\cache\redis\services\UserCache.service.js
+Content:
+import UserCacheRepository from '../repositories/UserCache.repository.js';
+
+class UserCacheService {
+  async cacheUser(userId, userData, ttl = 3600) {
+    await UserCacheRepository.setUser(userId, userData, ttl);
+  }
+
+  async getCachedUser(userId) {
+    return await UserCacheRepository.getUser(userId);
+  }
+
+  async removeCachedUser(userId) {
+    await UserCacheRepository.deleteUser(userId);
+  }
+}
+
+export default new UserCacheService();
+
+||------------------------------------------------------||
+

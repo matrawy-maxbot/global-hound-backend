@@ -1,0 +1,223 @@
+File: C:\Users\home\Desktop\backend platform\src\modules\monitoring\alerts\api_alerts.yml
+Content:
+- alert: HighErrorRate
+  expr: rate(http_requests_errors_total[1m]) > 10
+  for: 5m
+  labels:
+    severity: critical
+  annotations:
+    summary: "High error rate detected"
+    description: "Error rate is above 10 requests per minute."
+
+||------------------------------------------------------||
+
+File: C:\Users\home\Desktop\backend platform\src\modules\monitoring\alerts\database_alerts.yml
+Content:
+- alert: SlowDatabaseQueries
+  expr: rate(db_query_duration_seconds[1m]) > 5
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    summary: "Slow database queries detected"
+    description: "Database query duration is above 5 seconds."
+
+||------------------------------------------------------||
+
+File: C:\Users\home\Desktop\backend platform\src\modules\monitoring\alerts\system_alerts.yml
+Content:
+- alert: HighCPUUsage
+  expr: rate(node_cpu_seconds_total[1m]) > 90
+  for: 5m
+  labels:
+    severity: critical
+  annotations:
+    summary: "High CPU usage detected"
+    description: "CPU usage is above 90%."
+
+||------------------------------------------------------||
+
+File: C:\Users\home\Desktop\backend platform\src\modules\monitoring\config\alerts.config.js
+Content:
+export const email = 'admin@example.com';
+export const slack_webhook = 'https://hooks.slack.com/...';
+export const pagerduty_key = 'your_pagerduty_key_here';
+
+||------------------------------------------------------||
+
+File: C:\Users\home\Desktop\backend platform\src\modules\monitoring\config\grafana.config.js
+Content:
+export const url = 'http://localhost:3000';
+export const api_key = 'your_api_key_here';
+export const auth = {
+  username: 'admin',
+  password: 'securepassword'
+};
+
+||------------------------------------------------------||
+
+File: C:\Users\home\Desktop\backend platform\src\modules\monitoring\config\prometheus.config.js
+Content:
+export const scrape_interval = '15s';
+export const targets = {
+  api: ['localhost:9090'],
+  database: ['localhost:9091'],
+  system: ['localhost:9092']
+};
+export const tls = {
+  enabled: true,
+  cert_file: '/path/to/cert.pem',
+  key_file: '/path/to/key.pem'
+};
+
+||------------------------------------------------------||
+
+File: C:\Users\home\Desktop\backend platform\src\modules\monitoring\dashboards\api_dashboard.json
+Content:
+{
+  "panels": [
+    {
+      "title": "API Requests",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total[1m])",
+          "legendFormat": "Requests"
+        }
+      ],
+      "annotations": {
+        "enable": true,
+        "query": "events{type='deployment'}"
+      }
+    },
+    {
+      "title": "API Response Time",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "rate(http_request_duration_seconds[1m])",
+          "legendFormat": "Response Time"
+        }
+      ]
+    }
+  ]
+}
+
+||------------------------------------------------------||
+
+File: C:\Users\home\Desktop\backend platform\src\modules\monitoring\dashboards\database_dashboard.json
+Content:
+{
+  "panels": [
+    {
+      "title": "Database Queries",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "rate(db_queries_total[1m])",
+          "legendFormat": "Queries"
+        }
+      ]
+    },
+    {
+      "title": "Active Connections",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "db_connections_active",
+          "legendFormat": "Connections"
+        }
+      ]
+    }
+  ]
+}
+
+||------------------------------------------------------||
+
+File: C:\Users\home\Desktop\backend platform\src\modules\monitoring\dashboards\system_dashboard.json
+Content:
+{
+  "panels": [
+    {
+      "title": "CPU Usage",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "rate(node_cpu_seconds_total[1m])",
+          "legendFormat": "CPU"
+        }
+      ]
+    },
+    {
+      "title": "Memory Usage",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "node_memory_usage_bytes",
+          "legendFormat": "Memory"
+        }
+      ]
+    }
+  ]
+}
+
+||------------------------------------------------------||
+
+File: C:\Users\home\Desktop\backend platform\src\modules\monitoring\README.md
+Content:
+# Monitoring
+
+## How to Start
+1. Run `./scripts/start_monitoring.sh`.
+2. Access Grafana at `http://localhost:3000`.
+
+## Adding Alerts
+- Edit the files in `alerts/`.
+- Reload Prometheus to apply changes.
+
+## Troubleshooting
+### Prometheus not scraping targets
+- Check if the targets are up and running.
+- Verify the scrape interval in `prometheus.config.js`.
+
+## Extending Monitoring
+- To monitor Kubernetes, add the following targets to `prometheus.config.js`:
+  ```javascript
+  kubernetes: ['localhost:9093']
+
+||------------------------------------------------------||
+
+File: C:\Users\home\Desktop\backend platform\src\modules\monitoring\scripts\start_monitoring.sh
+Content:
+#!/bin/bash
+if ! command -v docker &> /dev/null; then
+  echo "Docker is not installed. Please install Docker first."
+  exit 1
+fi
+
+if ! command -v docker-compose &> /dev/null; then
+  echo "Docker Compose is not installed. Please install Docker Compose first."
+  exit 1
+fi
+
+if docker-compose ps | grep -q "Up"; then
+  echo "Services are already running."
+else
+  docker-compose up -d
+  echo "Monitoring started!"
+fi
+
+||------------------------------------------------------||
+
+File: C:\Users\home\Desktop\backend platform\src\modules\monitoring\scripts\stop_monitoring.sh
+Content:
+#!/bin/bash
+if docker-compose ps | grep -q "Up"; then
+  docker-compose down
+  echo "Monitoring stopped!"
+else
+  echo "Services are already stopped."
+fi
+
+||------------------------------------------------------||
+

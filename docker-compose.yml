@@ -1,0 +1,122 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:latest
+    container_name: postgres_backend
+    environment:
+      POSTGRES_DB: ims_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+      POSTGRES_HOST_AUTH_METHOD: trust
+      MAX_CONNECTIONS: 200
+      SHARED_BUFFERS: 4GB
+      WORK_MEM: 16MB
+      MAX_PARALLEL_WORKERS_PER_GATHER: 4
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./src/modules/database/postgreSQL/test/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - backend_network
+
+  # MongoDB Database
+  mongodb:
+    image: bitnami/mongodb:latest
+    container_name: mongodb_backend
+    environment:
+      MONGODB_ROOT_USER: testuser
+      MONGODB_ROOT_PASSWORD: testpass
+      MONGODB_DATABASE: ims_db
+      MONGODB_USERNAME: testuser
+      MONGODB_PASSWORD: testpass
+      MONGODB_AUTHORITATIVE: "yes"
+    ports:
+      - "37017:27017"
+    volumes:
+      - mongodb_data:/bitnami/mongodb
+      - ./src/modules/database/mongoDB/test/init:/docker-entrypoint-initdb.d
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: bitnami/redis:latest
+    container_name: redis_backend
+    environment:
+      REDIS_PASSWORD: testpass
+      REDIS_DATABASE: 0
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/bitnami/redis/data
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "testpass", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  # Redis Insight - Web UI for Redis
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: redisinsight_backend
+    ports:
+      - "5540:5540"
+    networks:
+      - backend_network
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  # ClamAV - Antivirus Scanner
+  clamav:
+    image: clamav/clamav:latest
+    container_name: clamav_backend
+    ports:
+      - "3310:3310"
+    volumes:
+      - clamav_data:/var/lib/clamav
+    environment:
+      - CLAMAV_NO_FRESHCLAM=false
+      - FRESHCLAM_CHECKS=24
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/clamdcheck.sh"]
+      interval: 60s
+      timeout: 30s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  mongodb_data:
+    driver: local
+  redis_data:
+    driver: local
+  clamav_data:
+    driver: local
+
+networks:
+  backend_network:
+    driver: bridge
+    name: backend_platform_network

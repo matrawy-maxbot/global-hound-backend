@@ -1,0 +1,1254 @@
+
+File: src\config\environments\Database.env
+Content:
+# MySQL
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=password
+MYSQL_DB=my_database
+
+# PostgreSQL
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=root
+POSTGRES_PASSWORD=password
+POSTGRES_DB=my_database
+
+# MongoDB
+MONGO_URI=mongodb://localhost:27017/my_database
+
+# Redis (Cache and Queue)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=password
+REDIS_DB=0
+
+||------------------------------------------------------||
+
+File: src\config\environments\FileStorage.env
+Content:
+FILE_STORAGE_PATH=./uploads
+MAX_FILE_SIZE=5242880 # 5MB
+
+||------------------------------------------------------||
+
+File: src\config\environments\GraphQL.env
+Content:
+# GraphQL Settings
+GRAPHQL_ENDPOINT=/graphql        # مسار GraphQL
+GRAPHQL_PLAYGROUND=true          # تفعيل Playground (لبيئة التطوير فقط)
+GRAPHQL_INTROSPECTION=true       # تمكين introspection (للتطوير، أوقفه في الإنتاج)
+GRAPHQL_DEPTH_LIMIT=10           # الحد الأقصى لعمق الاستعلام (لحماية الخادم)
+GRAPHQL_COMPLEXITY_LIMIT=5000    # الحد الأقصى لتعقيد الاستعلام (لحماية الأداء)
+GRAPHQL_TRACING=true             # تمكين تتبع الأداء
+
+||------------------------------------------------------||
+
+File: src\config\environments\IntegratedAuthentication.env
+Content:
+# OAuth2
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+FACEBOOK_CLIENT_ID=your_facebook_client_id
+FACEBOOK_CLIENT_SECRET=your_facebook_client_secret
+
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+
+||------------------------------------------------------||
+
+File: src\config\environments\Kafka.env
+Content:
+KAFKA_BROKER=localhost:9092
+KAFKA_CLIENT_ID=my_app
+KAFKA_GROUP_ID=my_group
+
+||------------------------------------------------------||
+
+File: src\config\environments\Notifications.env
+Content:
+# Email Notifications
+EMAIL_HOST=smtp.mailtrap.io
+EMAIL_PORT=2525
+EMAIL_USER=your_email_user
+EMAIL_PASSWORD=your_email_password
+EMAIL_FROM=no-reply@yourdomain.com
+
+# SMS (Twilio)
+TWILIO_ACCOUNT_SID=your_twilio_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_PHONE_NUMBER=your_twilio_number
+
+# Push Notifications (Firebase)
+FIREBASE_API_KEY=your_firebase_api_key
+FIREBASE_PROJECT_ID=your_firebase_project_id
+
+||------------------------------------------------------||
+
+File: src\config\environments\Queue.env
+Content:
+# RabbitMQ Settings
+RABBITMQ_HOST=localhost           # عنوان الخادم
+RABBITMQ_PORT=5672                # المنفذ الافتراضي
+RABBITMQ_USER=guest               # اسم المستخدم
+RABBITMQ_PASSWORD=guest           # كلمة المرور
+RABBITMQ_VHOST=/                  # Virtual Host
+RABBITMQ_QUEUE=my_queue           # اسم الطابور الافتراضي
+RABBITMQ_EXCHANGE=my_exchange     # اسم التبادل الافتراضي
+RABBITMQ_EXCHANGE_TYPE=direct     # نوع التبادل (direct, topic, fanout, headers)
+RABBITMQ_RETRY_COUNT=5            # عدد مرات إعادة المحاولة عند فشل الرسائل
+RABBITMQ_RETRY_DELAY_MS=5000      # تأخير بين المحاولات (بالمللي ثانية)
+RABBITMQ_HEARTBEAT=60             # نبضات الحياة (بالثواني)
+
+||------------------------------------------------------||
+
+File: src\config\environments\Security.env
+Content:
+# JWT (JSON Web Token)
+JWT_SECRET=my_secret_key
+JWT_EXPIRES_IN=1h
+
+# CORS (Cross-Origin Resource Sharing)
+CORS_ORIGIN=*
+CORS_METHODS=GET,POST,PUT,DELETE
+CORS_HEADERS=Content-Type,Authorization
+
+||------------------------------------------------------||
+
+File: src\config\environments\Server.env
+Content:
+# Server Settings
+SERVER_HOST=0.0.0.0
+SERVER_PORT=3000
+NODE_ENV=development  # development, production, testing
+BASE_URL=http://localhost:3000
+
+||------------------------------------------------------||
+
+File: src\config\environments\SessionCookies.env
+Content:
+# Cookie settings
+COOKIE_SECRET=your_cookie_secret_key
+COOKIE_MAX_AGE=3600000 # 1 hour in milliseconds
+
+# Session settings
+SESSION_SECRET=your_session_secret_key
+SESSION_MAX_AGE=3600000 # 1 hour in milliseconds
+
+||------------------------------------------------------||
+
+File: src\config\environments\Webhooks.env
+Content:
+WEBHOOK_SECRET=my_webhook_secret
+WEBHOOK_RETRY_COUNT=3
+WEBHOOK_RETRY_DELAY=5000
+
+||------------------------------------------------------||
+
+File: src\config\environments\Websocket.env
+Content:
+WEBSOCKET_PORT=8080
+WEBSOCKET_PATH=/ws
+WEBSOCKET_ORIGIN=*
+
+||------------------------------------------------------||
+
+File: src\config\database.config.js
+Content:
+import { object, string, number } from 'joi';
+
+// تعريف Schema للتحقق من المتغيرات لكل نوع من قواعد البيانات
+const databaseSchema = object({
+  // MySQL
+  MYSQL_HOST: string().hostname().required(),
+  MYSQL_PORT: number().integer().min(1).max(65535).required(),
+  MYSQL_USER: string().required(),
+  MYSQL_PASSWORD: string().allow('').required(),
+  MYSQL_DB: string().required(),
+
+  // PostgreSQL
+  POSTGRES_HOST: string().hostname().required(),
+  POSTGRES_PORT: number().integer().min(1).max(65535).required(),
+  POSTGRES_USER: string().required(),
+  POSTGRES_PASSWORD: string().allow('').required(),
+  POSTGRES_DB: string().required(),
+
+  // MongoDB
+  MONGO_URI: string().uri().required(),
+
+  // Redis (للتخزين المؤقت والطوابير)
+  REDIS_HOST: string().hostname().required(),
+  REDIS_PORT: number().integer().min(1).max(65535).required(),
+  REDIS_PASSWORD: string().allow('').required(),
+  REDIS_DB: number().integer().min(0).default(0),
+}).unknown(); // السماح بوجود متغيرات أخرى
+
+// التحقق من المتغيرات
+const { value: databaseConfig, error } = databaseSchema.validate(process.env, {
+  abortEarly: false, // عرض جميع الأخطاء
+});
+
+if (error) {
+  throw new Error(
+    `Database configuration validation error: ${error.details.map((x) => x.message).join(', ')}`
+  );
+}
+
+// تصدير الإعدادات لكل نوع من قواعد البيانات
+export const mysql = {
+    host: databaseConfig.MYSQL_HOST,
+    port: databaseConfig.MYSQL_PORT,
+    user: databaseConfig.MYSQL_USER,
+    password: databaseConfig.MYSQL_PASSWORD,
+    database: databaseConfig.MYSQL_DB,
+};
+export const postgresql = {
+    host: databaseConfig.POSTGRES_HOST,
+    port: databaseConfig.POSTGRES_PORT,
+    user: databaseConfig.POSTGRES_USER,
+    password: databaseConfig.POSTGRES_PASSWORD,
+    database: databaseConfig.POSTGRES_DB,
+};
+export const mongodb = {
+    uri: databaseConfig.MONGO_URI,
+};
+export const redis = {
+    host: databaseConfig.REDIS_HOST,
+    port: databaseConfig.REDIS_PORT,
+    password: databaseConfig.REDIS_PASSWORD,
+    db: databaseConfig.REDIS_DB,
+};
+
+||------------------------------------------------------||
+
+File: src\config\fileStorage.config.js
+Content:
+import { object, string, number } from 'joi';
+
+// تعريف Schema للتحقق من الإعدادات
+const fileStorageSchema = object({
+  FILE_STORAGE_PATH: string().required(),
+  MAX_FILE_SIZE: number().integer().min(1).required(),
+}).unknown(); // السماح بمتغيرات إضافية
+
+// التحقق من القيم
+const { value: fileStorageConfig, error } = fileStorageSchema.validate(process.env, {
+  abortEarly: false,
+});
+
+if (error) {
+  throw new Error(
+    `File Storage configuration validation error: ${error.details.map((x) => x.message).join(', ')}`
+  );
+}
+
+export const storagePath = fileStorageConfig.FILE_STORAGE_PATH;
+export const maxFileSize = fileStorageConfig.MAX_FILE_SIZE;
+
+||------------------------------------------------------||
+
+File: src\config\graphql.config.js
+Content:
+import { object, string, boolean, number } from 'joi';
+
+// تعريف Schema للتحقق من الإعدادات
+const graphqlSchema = object({
+  GRAPHQL_ENDPOINT: string().uri({ allowRelative: true }).required(),
+  GRAPHQL_PLAYGROUND: boolean().required(),
+  GRAPHQL_INTROSPECTION: boolean().required(),
+  GRAPHQL_DEPTH_LIMIT: number().integer().min(1).default(10),
+  GRAPHQL_COMPLEXITY_LIMIT: number().integer().min(1).default(5000),
+  GRAPHQL_TRACING: boolean().default(false),
+}).unknown();
+
+const { value: graphqlConfig, error } = graphqlSchema.validate(process.env, {
+  abortEarly: false,
+});
+
+if (error) {
+  throw new Error(
+    `GraphQL configuration validation error: ${error.details.map((x) => x.message).join(', ')}`
+  );
+}
+
+export const {
+  GRAPHQL_ENDPOINT,
+  GRAPHQL_PLAYGROUND,
+  GRAPHQL_INTROSPECTION,
+  GRAPHQL_DEPTH_LIMIT,
+  GRAPHQL_COMPLEXITY_LIMIT,
+  GRAPHQL_TRACING,
+} = graphqlConfig;
+
+||------------------------------------------------------||
+
+File: src\config\integratedAuth.config.js
+Content:
+import { object, string } from 'joi';
+
+// تعريف Schema للتحقق من الإعدادات
+const authSchema = object({
+  GOOGLE_CLIENT_ID: string().required(),
+  GOOGLE_CLIENT_SECRET: string().required(),
+  FACEBOOK_CLIENT_ID: string().required(),
+  FACEBOOK_CLIENT_SECRET: string().required(),
+  GITHUB_CLIENT_ID: string().required(),
+  GITHUB_CLIENT_SECRET: string().required(),
+}).unknown();
+
+const { value: integratedAuthConfig, error } = authSchema.validate(process.env, {
+  abortEarly: false,
+});
+
+if (error) {
+  throw new Error(
+    `Integrated Authentication configuration validation error: ${error.details.map((x) => x.message).join(', ')}`
+  );
+}
+
+
+export const {
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  FACEBOOK_CLIENT_ID,
+  FACEBOOK_CLIENT_SECRET,
+  GITHUB_CLIENT_ID,
+  GITHUB_CLIENT_SECRET,
+} = integratedAuthConfig;
+
+||------------------------------------------------------||
+
+File: src\config\kafka.config.js
+Content:
+import { object, string } from 'joi';
+
+// تعريف Schema للتحقق من الإعدادات
+const kafkaSchema = object({
+  KAFKA_BROKER: string().required(),
+  KAFKA_CLIENT_ID: string().required(),
+  KAFKA_GROUP_ID: string().required(),
+}).unknown();
+
+const { value: kafkaConfig, error } = kafkaSchema.validate(process.env, {
+  abortEarly: false,
+});
+
+if (error) {
+  throw new Error(
+    `Kafka configuration validation error: ${error.details.map((x) => x.message).join(', ')}`
+  );
+}
+
+export const {
+  KAFKA_BROKER,
+  KAFKA_CLIENT_ID,
+  KAFKA_GROUP_ID,
+} = kafkaConfig;
+
+||------------------------------------------------------||
+
+File: src\config\notifications.config.js
+Content:
+import { object, string, number } from 'joi';
+
+// تعريف Schema للتحقق من الإعدادات
+const notificationsSchema = object({
+  // Email Notifications
+  EMAIL_HOST: string().hostname().required(),
+  EMAIL_PORT: number().integer().min(1).max(65535).required(),
+  EMAIL_USER: string().required(),
+  EMAIL_PASSWORD: string().required(),
+  EMAIL_FROM: string().email().required(),
+
+  // SMS (Twilio)
+  TWILIO_ACCOUNT_SID: string().required(),
+  TWILIO_AUTH_TOKEN: string().required(),
+  TWILIO_PHONE_NUMBER: string().required(),
+
+  // Push Notifications (Firebase)
+  FIREBASE_API_KEY: string().required(),
+  FIREBASE_PROJECT_ID: string().required(),
+}).unknown();
+
+const { value: notificationsConfig, error } = notificationsSchema.validate(process.env, {
+  abortEarly: false,
+});
+
+if (error) {
+  throw new Error(
+    `Notifications configuration validation error: ${error.details.map((x) => x.message).join(', ')}`
+  );
+}
+
+export const {
+  EMAIL_HOST,
+  EMAIL_PORT,
+  EMAIL_USER,
+  EMAIL_PASSWORD,
+  EMAIL_FROM,
+  TWILIO_ACCOUNT_SID,
+  TWILIO_AUTH_TOKEN,
+  TWILIO_PHONE_NUMBER,
+  FIREBASE_API_KEY,
+  FIREBASE_PROJECT_ID,
+} = notificationsConfig;
+
+||------------------------------------------------------||
+
+File: src\config\queue.config.js
+Content:
+import { object, string, number } from 'joi';
+
+// تعريف Schema للتحقق من الإعدادات
+const queueSchema = object({
+  RABBITMQ_HOST: string().hostname().required(),
+  RABBITMQ_PORT: number().integer().min(1).max(65535).required(),
+  RABBITMQ_USER: string().required(),
+  RABBITMQ_PASSWORD: string().required(),
+  RABBITMQ_VHOST: string().default('/'),
+  RABBITMQ_QUEUE: string().required(),
+  RABBITMQ_EXCHANGE: string().required(),
+  RABBITMQ_EXCHANGE_TYPE: string()
+    .valid('direct', 'topic', 'fanout', 'headers')
+    .default('direct'),
+  RABBITMQ_RETRY_COUNT: number().integer().min(0).default(5),
+  RABBITMQ_RETRY_DELAY_MS: number().integer().min(0).default(5000),
+  RABBITMQ_HEARTBEAT: number().integer().min(0).default(60),
+}).unknown();
+
+const { value: queueConfig, error } = queueSchema.validate(process.env, {
+  abortEarly: false,
+});
+
+if (error) {
+  throw new Error(
+    `Queue configuration validation error: ${error.details.map((x) => x.message).join(', ')}`
+  );
+}
+
+export const {
+  RABBITMQ_HOST,
+  RABBITMQ_PORT,
+  RABBITMQ_USER,
+  RABBITMQ_PASSWORD,
+  RABBITMQ_VHOST,
+  RABBITMQ_QUEUE,
+  RABBITMQ_EXCHANGE,
+  RABBITMQ_EXCHANGE_TYPE,
+  RABBITMQ_RETRY_COUNT,
+  RABBITMQ_RETRY_DELAY_MS,
+  RABBITMQ_HEARTBEAT,
+} = queueConfig;
+
+||------------------------------------------------------||
+
+File: src\config\security.config.js
+Content:
+import { object, string, number } from 'joi';
+
+// تعريف Schema للتحقق من الإعدادات
+const securitySchema = object({
+  // JWT
+  JWT_SECRET: string().required(),
+  JWT_EXPIRES_IN: string().default('1h'),
+
+  // CORS
+  CORS_ORIGIN: string().required(),
+  CORS_METHODS: string().default('GET,POST,PUT,DELETE'),
+  CORS_HEADERS: string().default('Content-Type,Authorization'),
+}).unknown();
+
+const { value: securityConfig, error } = securitySchema.validate(process.env, {
+  abortEarly: false,
+});
+
+if (error) {
+  throw new Error(
+    `Security configuration validation error: ${error.details.map((x) => x.message).join(', ')}`
+  );
+}
+
+export const {
+  JWT_SECRET,
+  JWT_EXPIRES_IN,
+  CORS_ORIGIN,
+  CORS_METHODS,
+  CORS_HEADERS,
+} = securityConfig;
+
+||------------------------------------------------------||
+
+File: src\config\server.config.js
+Content:
+import { object, string, number } from 'joi';
+
+// تعريف Schema للتحقق من الإعدادات
+const serverSchema = object({
+  SERVER_HOST: string().hostname().default('0.0.0.0'),
+  SERVER_PORT: number().integer().min(1).max(65535).default(3000),
+  NODE_ENV: string()
+    .valid('development', 'production', 'testing')
+    .default('development'),
+  BASE_URL: string().uri().required(),
+}).unknown();
+
+const { value: serverConfig, error } = serverSchema.validate(process.env, {
+  abortEarly: false,
+});
+
+if (error) {
+  throw new Error(
+    `Server configuration validation error: ${error.details.map((x) => x.message).join(', ')}`
+  );
+}
+
+export const {
+  SERVER_HOST,
+  SERVER_PORT,
+  NODE_ENV,
+  BASE_URL,
+} = serverConfig;
+
+||------------------------------------------------------||
+
+File: src\config\sessionCookies.config.js
+Content:
+import { object, string, number } from 'joi';
+
+// تعريف Schema للتحقق من الإعدادات
+const sessionCookiesSchema = object({
+  SESSION_SECRET: string().required(),
+  SESSION_MAX_AGE: number().integer().min(1).required(),
+  COOKIE_SECRET: string().required(),
+  COOKIE_MAX_AGE: number().integer().min(1).required(),
+}).unknown(); // السماح بمتغيرات إضافية
+
+// التحقق من القيم
+const { value: sessionCookiesConfig, error } = sessionCookiesSchema.validate(process.env, {
+  abortEarly: false,
+});
+
+if (error) {
+    throw new Error(
+        `Session Cookies configuration validation error: ${error.details.map((x) => x.message).join(', ')}`
+    );
+}
+
+export const {
+    SESSION_SECRET,
+    SESSION_MAX_AGE,
+    COOKIE_SECRET,
+    COOKIE_MAX_AGE,
+} = sessionCookiesConfig;
+
+||------------------------------------------------------||
+
+File: src\config\status.config.js
+Content:
+const statusCodes = {
+    // 100 informational
+    CONTINUE: 100,
+    SWITCHING_PROTOCOLS: 101,
+    PROCESSING: 102,
+    EARLY_HINTS: 103,
+    // 200 success
+    OK: 200,
+    CREATED: 201,
+    ACCEPTED: 202,
+    NON_AUTHORITATIVE_INFORMATION: 203,
+    NO_CONTENT: 204,
+    RESET_CONTENT: 205,
+    PARTIAL_CONTENT: 206,
+    MULTI_STATUS: 207,
+    ALREADY_REPORTED: 208,
+    IM_USED: 226,
+    // 300 redirection
+    MULTIPLE_CHOICES: 300,
+    MOVED_PERMANENTLY: 301,
+    FOUND: 302,
+    SEE_OTHER: 303,
+    NOT_MODIFIED: 304,
+    USE_PROXY: 305,
+    SWITCH_PROXY: 306,
+    TEMPORARY_REDIRECT: 307,
+    PERMANENT_REDIRECT: 308,
+    // 400 client errors
+    BAD_REQUEST: 400,
+    UNAUTHORIZED: 401,
+    FORBIDDEN: 403,
+    NOT_FOUND: 404,
+    METHOD_NOT_ALLOWED: 405,
+    NOT_ACCEPTABLE: 406,
+    REQUEST_TIMEOUT: 408,
+    CONFLICT: 409,
+    GONE: 410,
+    LENGTH_REQUIRED: 411,
+    PRECONDITION_FAILED: 412,
+    PAYLOAD_TOO_LARGE: 413,
+    URI_TOO_LONG: 414,
+    UNSUPPORTED_MEDIA_TYPE: 415,
+    RANGE_NOT_SATISFIABLE: 416,
+    EXPECTATION_FAILED: 417,
+    IM_A_TEAPOT: 418,
+    MISDIRECTED_REQUEST: 421,
+    UNPROCESSABLE_ENTITY: 422,
+    LOCKED: 423,
+    FAILED_DEPENDENCY: 424,
+    UPGRADE_REQUIRED: 426,
+    PRECONDITION_REQUIRED: 428,
+    TOO_MANY_REQUESTS: 429,
+    REQUEST_HEADER_FIELDS_TOO_LARGE: 431,
+    UNAVAILABLE_FOR_LEGAL_REASONS: 451,
+    // 500 server errors
+    INTERNAL_SERVER_ERROR: 500,
+    NOT_IMPLEMENTED: 501,
+    BAD_GATEWAY: 502,
+    SERVICE_UNAVAILABLE: 503,
+    GATEWAY_TIMEOUT: 504,
+    HTTP_VERSION_NOT_SUPPORTED: 505,
+    VARIANT_ALSO_NEGOTIATES: 506,
+    INSUFFICIENT_STORAGE: 507,
+    LOOP_DETECTED: 508,
+    NOT_EXTENDED: 510,
+    NETWORK_AUTHENTICATION_REQUIRED: 511
+};
+
+export default statusCodes;
+
+||------------------------------------------------------||
+
+File: src\config\webhooks.config.js
+Content:
+import { object, string, number } from 'joi';
+
+// تعريف Schema للتحقق من الإعدادات
+const webhooksSchema = object({
+  WEBHOOK_SECRET: string().required(),
+  WEBHOOK_RETRY_COUNT: number().integer().min(0).default(3),
+  WEBHOOK_RETRY_DELAY: number().integer().min(0).default(5000),
+}).unknown();
+
+const { value: webhooksConfig, error } = webhooksSchema.validate(process.env, {
+  abortEarly: false,
+});
+
+if (error) {
+  throw new Error(
+    `Webhooks configuration validation error: ${error.details.map((x) => x.message).join(', ')}`
+  );
+}
+
+export const {
+  WEBHOOK_SECRET,
+  WEBHOOK_RETRY_COUNT,
+  WEBHOOK_RETRY_DELAY,
+} = webhooksConfig;
+
+||------------------------------------------------------||
+
+File: src\config\websocket.config.js
+Content:
+import { object, number, string } from 'joi';
+
+// تعريف Schema للتحقق من الإعدادات
+const websocketSchema = object({
+  WEBSOCKET_PORT: number().integer().min(1).max(65535).default(8080),
+  WEBSOCKET_PATH: string().default('/ws'),
+  WEBSOCKET_ORIGIN: string().default('*'),
+}).unknown();
+
+const { value: websocketConfig, error } = websocketSchema.validate(process.env, {
+  abortEarly: false,
+});
+
+if (error) {
+  throw new Error(
+    `WebSocket configuration validation error: ${error.details.map((x) => x.message).join(', ')}`
+  );
+}
+
+export const {
+  WEBSOCKET_PORT,
+  WEBSOCKET_PATH,
+  WEBSOCKET_ORIGIN,
+} = websocketConfig;
+
+||------------------------------------------------------||
+
+File: src\middlewares\authentication\auth.middleware.js
+Content:
+import { verify } from 'jsonwebtoken';
+import { JWT_SECRET } from '../../config/security.config.js';
+
+const authMiddleware = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    res.status(401);
+    return next(new Error('Unauthorized: No token provided'));
+  }
+
+  try {
+    const decoded = verify(token, JWT_SECRET);
+    req.user = decoded; // ربط بيانات المستخدم بالطلب
+    next();
+  } catch (err) {
+    res.status(401);
+    next(new Error('Unauthorized: Invalid token'));
+  }
+};
+
+export default authMiddleware;
+
+||------------------------------------------------------||
+
+File: src\middlewares\authentication\websocketAuth.middleware.js
+Content:
+import { verify } from 'jsonwebtoken';
+import { JWT_SECRET } from '../../config/security.config.js';
+
+const wsAuthMiddleware = (socket, next) => {
+  const token = socket.handshake.query.token;
+
+  if (!token) {
+    return next(new Error('Unauthorized: No token provided'));
+  }
+
+  try {
+    const decoded = verify(token, JWT_SECRET);
+    socket.user = decoded;
+    next();
+  } catch (err) {
+    next(new Error('Unauthorized: Invalid token'));
+  }
+};
+
+export default wsAuthMiddleware;
+
+||------------------------------------------------------||
+
+File: src\middlewares\errors\errorHandler.middleware.js
+Content:
+import { NODE_ENV } from '../../config/server.config.js';
+
+const errorHandlerMiddleware = (err, req, res, next) => {
+    const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
+    const message = NODE_ENV === 'production' ? 'Something went wrong' : err.message;
+    const stack = NODE_ENV === 'production' ? null : err.stack;
+    const messageBody = {
+        success: false,
+        error: {message, stack}
+    };
+  
+    console.error(`[Error] ${statusCode} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`, err.stack);
+    
+    res.status(statusCode).json(messageBody);
+  };
+  
+  export default errorHandlerMiddleware;
+
+||------------------------------------------------------||
+
+File: src\middlewares\errors\notFound.middleware.js
+Content:
+const notFoundMiddleware = (req, res, next) => {
+    res.status(404);
+    next(new Error(`404 Not Found - ${req.originalUrl}`));
+  };
+  
+  export default notFoundMiddleware;
+
+||------------------------------------------------------||
+
+File: src\middlewares\logging\requestLogger.middleware.js
+Content:
+import morgan from 'morgan';
+
+const requestLogger = morgan(':method :url :status :res[content-length] - :response-time ms');
+
+export default requestLogger;
+
+||------------------------------------------------------||
+
+File: src\middlewares\logging\responseTime.middleware.js
+Content:
+import responseTime from 'response-time';
+
+const responseTimeMiddleware = responseTime((req, res, time) => {
+  console.log(`[Response Time] ${req.method} ${req.url} - ${time.toFixed(2)}ms`);
+});
+
+export default responseTimeMiddleware;
+
+||------------------------------------------------------||
+
+File: src\middlewares\permissions\permissions.middleware.js
+Content:
+import Permissions from '../../utils/permissions/permissions.util.js';
+
+export const hasPermissions = (...permissions) => (req, res, next) => {
+    const userPermissions = new Permissions(req.user.permissions);
+  
+    if (!userPermissions.has(permissions)) {
+      res.status(403);
+      return next(new Error('You do not have the required permissions'));
+    }
+  
+    next();
+};
+
+export const AnyPermission = (...permissions) => (req, res, next) => {
+    const userPermissions = new Permissions(req.user.permissions);
+  
+    if (!userPermissions.any(permissions)) {
+      res.status(403);
+      return next(new Error('You do not have the required permissions'));
+    }
+  
+    next();
+}
+
+||------------------------------------------------------||
+
+File: src\middlewares\security\cors.middleware.js
+Content:
+import cors from 'cors';
+import { CORS_ORIGIN, CORS_METHODS, CORS_HEADERS } from '../../config/security.config.js';
+
+const corsMiddleware = cors({
+  origin: CORS_ORIGIN,
+  methods: CORS_METHODS,
+  allowedHeaders: CORS_HEADERS,
+});
+
+export default corsMiddleware;
+
+||------------------------------------------------------||
+
+File: src\middlewares\security\helmet.middleware.js
+Content:
+import helmet from 'helmet';
+
+const helmetMiddleware = helmet({
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      defaultSrc: ["'self'"], // السماح فقط بالمصادر من نفس الخادم
+      scriptSrc: [
+        "'self'", 
+        "'unsafe-inline'", // استخدم فقط لو محتاجه لبيئة التطوير
+        // "https://trustedscripts.example.com",
+      ],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'", // استخدم لو محتاج CSS inline
+        // "https://trustedstyles.example.com",
+      ],
+      imgSrc: ["'self'", "data:"/*, "https://trustedimages.example.com"*/], // الصور
+      connectSrc: ["'self'"/*, "https://api.example.com"*/], // API
+      fontSrc: ["'self'"/*, "https://fonts.gstatic.com"*/], // الخطوط
+      objectSrc: ["'none'"], // منع objects بالكامل
+      frameSrc: ["'none'"], // منع iframe بالكامل
+      upgradeInsecureRequests: [], // ترقية كل الروابط من HTTP لـ HTTPS
+    },
+  },
+  crossOriginEmbedderPolicy: true, // سياسة المصادر المدمجة عبر الأصل
+  crossOriginResourcePolicy: { policy: 'same-origin' }, // سياسة المصادر عبر الأصل
+  hsts: {
+    maxAge: 31536000, // إجبار HTTPS لمدة سنة (ثواني)
+    includeSubDomains: true, // تطبيقه على كل الـ subdomains
+    preload: true, // لدعم الـ HSTS preload
+  },
+  frameguard: {
+    action: 'deny', // منع تحميل الصفحة في iframe
+  },
+  dnsPrefetchControl: {
+    allow: false, // منع المتصفح من DNS prefetching
+  },
+  referrerPolicy: {
+    policy: 'strict-origin-when-cross-origin', // سياسة المرجع Referrer Policy
+  },
+  xssFilter: false, // حماية XSS (قديم ولكنه مفيد)
+  noSniff: true, // منع Guessing Type للملفات
+  permittedCrossDomainPolicies: {
+    policy: 'none', // منع استخدام crossdomain.xml
+  },
+  hidePoweredBy: true, // إخفاء هيدر Express
+});
+
+export default helmetMiddleware;
+
+||------------------------------------------------------||
+
+File: src\middlewares\security\rateLimiter.middleware.js
+Content:
+import { RateLimiterMemory } from 'rate-limit-flexible';
+
+// إعداد الـ Rate Limiter العام لكل المستخدمين
+const generalLimiter = new RateLimiterMemory({
+    points: 100, // عدد الطلبات المسموحة
+    duration: 60, // خلال 60 ثانية (دقيقة واحدة)
+});
+
+// إعداد الـ Rate Limiter لمحاولات تسجيل الدخول (أكثر صرامة)
+const loginLimiter = new RateLimiterMemory({
+    points: 5, // مسموح بـ 5 محاولات فقط
+    duration: 60 * 5, // خلال 5 دقائق
+});
+
+// ميدل وير عام للحد من الطلبات
+const rateLimiterMiddleware = (req, res, next) => {
+    generalLimiter.consume(req.ip)
+        .then(() => {
+            next(); // كمل الطلب عادي
+        })
+        .catch(() => {
+            res.status(429);
+            next(new Error('Too many requests, please try again later.'));
+        });
+};
+
+// ميدل وير خاص بتسجيل الدخول
+const loginRateLimiter = (req, res, next) => {
+    loginLimiter.consume(req.ip)
+        .then(() => {
+            next();
+        })
+        .catch(() => {
+          res.status(429);
+          next(new Error('Too many login attempts, please try again later.'));
+        });
+};
+
+// تصدير الميدل وير
+export default { rateLimiterMiddleware, loginRateLimiter };
+
+||------------------------------------------------------||
+
+File: src\middlewares\security\session.middleware.js
+Content:
+import session from 'express-session';
+const RedisStore = require('connect-redis')(session); // استخدام Redis لتخزين الجلسات
+import redisClient from '../../modules/cache/redis/index.js'; // اتصال Redis من ملف config
+import { SESSION_SECRET } from '../../config/sessionCookies.config.js'; // اتصال Redis من ملف config
+import { NODE_ENV } from '../../config/server.config.js'; // اتصال Redis من ملف config
+
+const sessionMiddleware = session({
+  store: new RedisStore({ client: redisClient }),
+  secret: SESSION_SECRET || 'supersecretkey', // المفتاح السري للجلسات
+  resave: false, // منع إعادة حفظ الجلسة لو مفيش تغييرات
+  saveUninitialized: false, // منع إنشاء جلسات جديدة غير ضرورية
+  cookie: {
+    secure: NODE_ENV === 'production', // الجلسات تكون آمنة فقط في الإنتاج
+    httpOnly: true, // حماية الكوكيز من الـ JavaScript
+    maxAge: 1000 * 60 * 60 * 24, // مدة الجلسة: يوم كامل
+  },
+});
+
+export default sessionMiddleware;
+
+||------------------------------------------------------||
+
+File: src\middlewares\security\xssClean.middleware.js
+Content:
+import xssClean from 'xss-clean';
+
+const xssProtectionMiddleware = xssClean();
+
+export default xssProtectionMiddleware;
+
+||------------------------------------------------------||
+
+File: src\middlewares\validation\routesValidation.config.js
+Content:
+import { object, string, boolean, number } from "joi";
+
+// export const userSchema = object({
+//     email: string().email().required(),
+//     password: string().min(6).required(),
+// });
+
+||------------------------------------------------------||
+
+File: src\middlewares\validation\validation.middleware.js
+Content:
+const validationMiddleware = (schema) => (req, res, next) => {
+    const { error, value } = schema.validate(req.body, { abortEarly: false });
+  
+    if (error) {
+        res.status(400);
+        return next(new Error(error.details.map((err) => err.message).join(', ')));
+    }
+
+    if(!req.value) req.value = {};
+    req.value.body = value;
+  
+    next();
+  };
+  
+  export default validationMiddleware;
+
+||------------------------------------------------------||
+
+File: src\modules\cache\redis\index.js
+Content:
+import Redis from 'ioredis';
+import { redis } from '../../../config/database.config.js';
+
+const redisClient = new Redis({
+  host: redis.host || 'localhost',
+  port: redis.port || 6379,
+  password: redis.password || '',
+});
+
+redisClient.on('connect', () => console.log('Connected to Redis!'));
+redisClient.on('error', (err) => console.error('Redis Error:', err));
+
+export default redisClient;
+
+||------------------------------------------------------||
+
+File: src\utils\emailHelper.util.js
+Content:
+import { createTransport } from 'nodemailer';
+import { EMAIL_USER, EMAIL_PASSWORD } from '../config/notifications.config.js';
+
+const transporter = createTransport({
+    service: 'gmail',
+    auth: {
+        user: EMAIL_USER,
+        pass: EMAIL_PASSWORD,
+    },
+});
+
+const sendEmail = async (to, subject, text) => {
+    try {
+        await transporter.sendMail({ from: EMAIL_USER, to, subject, text });
+        return true;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export default { sendEmail };
+
+||------------------------------------------------------||
+
+File: src\utils\fileHelper.util.js
+Content:
+import { existsSync, unlinkSync } from 'fs';
+import { join } from 'path';
+
+const saveFile = (file, folder = 'uploads') => {
+    const filePath = join(__dirname, '../', folder, file.name);
+    file.mv(filePath, (err) => {
+        if (err) throw err;
+    });
+    return filePath;
+};
+
+const deleteFile = (filePath) => {
+    if (existsSync(filePath)) {
+        unlinkSync(filePath);
+    }
+};
+
+export default { saveFile, deleteFile };
+
+||------------------------------------------------------||
+
+File: src\utils\hash.util.js
+Content:
+import { genSalt, hash as _hash, compare } from 'bcryptjs';
+
+const hashPassword = async (password, saltNumber = 10) => {
+    const salt = await genSalt(saltNumber);
+    return await _hash(password, salt);
+};
+
+const comparePassword = async (password, hash) => {
+    return await compare(password, hash);
+};
+
+export default { hashPassword, comparePassword };
+
+||------------------------------------------------------||
+
+File: src\utils\jwt.util.js
+Content:
+import { sign, verify } from 'jsonwebtoken';
+import { JWT_SECRET } from '../config/security.config.js';
+
+const generateToken = (payload, expiresIn = '1h') => {
+    return sign(payload, JWT_SECRET, { expiresIn });
+};
+
+const verifyToken = (token) => {
+    try {
+        return verify(token, JWT_SECRET);
+    } catch (error) {
+        return null;
+    }
+};
+
+export default { generateToken, verifyToken };
+
+||------------------------------------------------------||
+
+File: src\utils\logger.util.js
+Content:
+import { createLogger, format as _format, transports as _transports } from "winston";
+
+const logger = (level) => createLogger({
+    level: "info",
+    format: _format.combine(
+        _format.timestamp(),
+        _format.json(),
+        _format.printf(({ timestamp, level, message }) => {
+            return `[${timestamp}] [${level.toUpperCase()}]: ${message}`;
+        })
+    ),
+    transports: [
+        new _transports.Console(),
+        new _transports.File({ filename: "logs/error.log", level: "error" }),
+        new _transports.File({ filename: "logs/combined.log" }),
+    ],
+});
+
+export default logger;
+
+||------------------------------------------------------||
+
+File: src\utils\object.util.js
+Content:
+const alterObject = (object, keys) => {
+    const newObject = { ...object };
+    keys.forEach(key => delete newObject[key]);
+    return newObject;
+};
+
+||------------------------------------------------------||
+
+File: src\utils\permissions\flags.js
+Content:
+export const PermissionFLAGS = {
+    VIEW_CHANNEL: 1 << 0, // 1
+    SEND_MESSAGES: 1 << 1, // 2
+    MANAGE_MESSAGES: 1 << 2, // 4
+    ADMINISTRATOR: 1 << 3, // 8
+    DELETE_MESSAGES: 1 << 4, // 16
+    BAN_USERS: 1 << 5, // 32
+};
+
+||------------------------------------------------------||
+
+File: src\utils\permissions\permissions.util.js
+Content:
+import { PermissionFLAGS } from "./flags.js";
+
+class Permissions {
+
+    constructor(permissionNumber = 0) {
+        this.permissions = permissionNumber;
+    }
+
+    // ✅ تحويل الإدخال (رقم أو اسم) إلى قيمة صحيحة
+    static resolvePermissions(input) {
+        if (!Array.isArray(input)) input = [input]; // تأكد إنه مصفوفة
+        return input
+            .map(perm => (typeof perm === "number" ? perm : PermissionFLAGS[perm] || 0))
+            .reduce((acc, perm) => acc | perm, 0);
+    }
+
+    // ✅ التحقق إذا عنده **كل** الأذونات المطلوبة
+    has(...permissions) {
+        const checkPerms = Permissions.resolvePermissions(permissions.flat());
+        return (this.permissions & checkPerms) === checkPerms;
+    }
+
+    // ✅ التحقق إذا عنده **أي** إذن من المجموعة
+    any(...permissions) {
+        const checkPerms = Permissions.resolvePermissions(permissions.flat());
+        return (this.permissions & checkPerms) !== 0;
+    }
+
+    // ✅ تعيين الأذونات الجديدة بدل القديمة
+    set(...permissions) {
+        this.permissions = Permissions.resolvePermissions(permissions.flat());
+        return this;
+    }
+
+    // ✅ إضافة أذونات متعددة
+    add(...permissions) {
+        this.permissions |= Permissions.resolvePermissions(permissions.flat());
+        return this;
+    }
+
+    // ✅ حذف أذونات متعددة
+    remove(...permissions) {
+        this.permissions &= ~Permissions.resolvePermissions(permissions.flat());
+        return this;
+    }
+
+    // ✅ إرجاع كل الأذونات في مصفوفة مفهومة
+    getPermissionsList() {
+        return Object.keys(PermissionFLAGS).filter(
+            perm => (this.permissions & PermissionFLAGS[perm]) === PermissionFLAGS[perm]
+        );
+    }
+
+    // ✅ تحويل مصفوفة أذونات إلى رقم واحد
+    static fromArray(permissionsArray) {
+        return Permissions.resolvePermissions(permissionsArray);
+    }
+
+    // ✅ طباعة الأذونات الحالية (للمساعدة في الديبج)
+    toString() {
+        return `Permissions: ${this.permissions} (${this.getPermissionsList().join(", ")})`;
+    }
+}
+
+export default Permissions;
+
+||------------------------------------------------------||
+
+File: src\utils\randomString.util.js
+Content:
+import { randomBytes } from 'crypto';
+
+const generateRandomString = (length = 32) => {
+    return randomBytes(length).toString('hex');
+};
+
+export default { generateRandomString };
+
+||------------------------------------------------------||
+
+File: src\utils\responseHandler.util.js
+Content:
+const successResponse = (res, data, message = 'success', status = 200) => {
+    return res.status(status).json({ success: true, message, data });
+};
+
+export default { successResponse };
+
+||------------------------------------------------------||
+
+File: src\utils\validators.util.js
+Content:
+import { object } from 'joi';
+
+const validate = (data, schemaConfig) => {
+    if(!schemaConfig) { 
+        throw new Error('Schema is required for validation');
+    }
+    const schema = object(schemaConfig);
+    return schema.validate(data);
+};
+
+export default { validate };
+
+||------------------------------------------------------||
+
