@@ -1,133 +1,133 @@
-# 📚 توثيق مشروع Global Hound - Backend
+# 📚 Global Hound - Backend Project Documentation
 
-## � فهرس المحتويات
+## 📋 Table of Contents
 
-1. [نظرة عامة على المشروع](#-نظرة-عامة-على-المشروع)
-2. [هيكل المشروع](#-هيكل-المشروع)
-3. [نظام الإعدادات](#️-نظام-الإعدادات-configuration-system)
-4. [نظام Middlewares](#️-نظام-middlewares)
-5. [نظام المصادقة](#-نظام-المصادقة-authentication-system)
-6. [نظام قاعدة البيانات](#️-نظام-قاعدة-البيانات)
-7. [نظام Stripe](#-نظام-stripe)
-8. [نظام التخزين المؤقت](#-نظام-التخزين-المؤقت-redis-cache)
-9. [واجهة API](#-واجهة-api-restful-routes)
-10. [الأدوات المساعدة](#-الأدوات-المساعدة-utilities)
-11. [تشغيل المشروع](#-تشغيل-المشروع)
-12. [الأمان](#-الأمان)
-13. [المراقبة والسجلات](#-المراقبة-والسجلات)
-14. [تنفيذ المتطلبات الأساسية](#-تنفيذ-المتطلبات-الأساسية-requirements-implementation)
-    - [Authentication & Roles](#1️⃣-authentication--roles-المصادقة-والأدوار)
-    - [Subscription Logic - Stripe](#2️⃣-subscription-logic---stripe-test-mode-منطق-الاشتراكات)
-    - [User Dashboard](#3️⃣-user-dashboard-لوحة-تحكم-المستخدم)
-    - [Admin Panel](#4️⃣-admin-panel-لوحة-تحكم-المشرف)
-    - [Security & Best Practices](#5️⃣-security--best-practices-الأمان-وأفضل-الممارسات)
-15. [ملخص التنفيذ](#-ملخص-التنفيذ)
+1. [Project Overview](#-project-overview)
+2. [Project Structure](#-project-structure)
+3. [Configuration System](#️-configuration-system)
+4. [Middlewares System](#️-middlewares-system)
+5. [Authentication System](#-authentication-system)
+6. [Database System](#️-database-system)
+7. [Stripe System](#-stripe-system)
+8. [Caching System (Redis)](#-caching-system-redis-cache)
+9. [API Interface (RESTful Routes)](#-api-interface-restful-routes)
+10. [Utilities](#-utilities)
+11. [Running the Project](#-running-the-project)
+12. [Security](#-security)
+13. [Monitoring and Logs](#-monitoring-and-logs)
+14. [Core Requirements Implementation](#-core-requirements-implementation)
+    - [Authentication & Roles](#1️⃣-authentication--roles)
+    - [Subscription Logic - Stripe](#2️⃣-subscription-logic---stripe-test-mode)
+    - [User Dashboard](#3️⃣-user-dashboard)
+    - [Admin Panel](#4️⃣-admin-panel)
+    - [Security & Best Practices](#5️⃣-security--best-practices)
+15. [Implementation Summary](#-implementation-summary)
 16. [Graceful Shutdown](#️-graceful-shutdown)
-17. [الدعم والتواصل](#-الدعم-والتواصل)
+17. [Support and Contact](#-support-and-contact)
 
 ---
 
-## �📋 نظرة عامة على المشروع
+## 📋 Project Overview
 
-هذا المشروع هو **منصة Backend متكاملة** مبنية باستخدام **Node.js + Express.js + TypeScript**. يوفر واجهة برمجة تطبيقات RESTful لإدارة المستخدمين، الاشتراكات، المدفوعات عبر Stripe، وإدارة السيارات.
+This project is a **comprehensive Backend platform** built with **Node.js + Express.js + TypeScript**. It provides a RESTful API for managing users, subscriptions, payments via Stripe, and vehicle management.
 
-### 🛠️ التقنيات المستخدمة
+### 🛠️ Technologies Used
 
-| التقنية | الوصف |
-|---------|-------|
-| **Node.js** | بيئة التشغيل |
-| **Express.js** | إطار عمل الويب |
-| **TypeScript** | لغة البرمجة |
-| **PostgreSQL** | قاعدة البيانات الرئيسية (مع Sequelize ORM) |
-| **MongoDB** | قاعدة بيانات ثانوية (MongoDB Atlas) |
-| **Redis** | التخزين المؤقت وإدارة الجلسات |
-| **Stripe** | معالجة المدفوعات والاشتراكات |
-| **Passport.js** | المصادقة |
-| **JWT** | إدارة التوكنات |
-| **Winston** | تسجيل الأحداث |
-| **Joi** | التحقق من البيانات |
+| Technology | Description |
+|------------|-------------|
+| **Node.js** | Runtime Environment |
+| **Express.js** | Web Framework |
+| **TypeScript** | Programming Language |
+| **PostgreSQL** | Primary Database (with Sequelize ORM) |
+| **MongoDB** | Secondary Database (MongoDB Atlas) |
+| **Redis** | Caching and Session Management |
+| **Stripe** | Payment and Subscription Processing |
+| **Passport.js** | Authentication |
+| **JWT** | Token Management |
+| **Winston** | Event Logging |
+| **Joi** | Data Validation |
 
 ---
 
-## 📁 هيكل المشروع
+## 📁 Project Structure
 
 ```
 backend/
 ├── src/
-│   ├── app.ts                    # تطبيق Express الرئيسي
-│   ├── server.ts                 # نقطة دخول الخادم
-│   ├── config/                   # ملفات الإعدادات
+│   ├── app.ts                    # Main Express Application
+│   ├── server.ts                 # Server Entry Point
+│   ├── config/                   # Configuration Files
 │   ├── middlewares/              # Middlewares
-│   ├── modules/                  # الوحدات الرئيسية
-│   │   ├── api/                  # واجهة API
-│   │   ├── auth/                 # نظام المصادقة
-│   │   ├── cache/                # التخزين المؤقت (Redis)
-│   │   ├── database/             # قواعد البيانات
-│   │   └── stripe/               # تكامل Stripe
-│   └── utils/                    # أدوات مساعدة
-├── docs/                         # التوثيق
-├── logs/                         # ملفات السجلات
-└── package.json                  # تبعيات المشروع
+│   ├── modules/                  # Main Modules
+│   │   ├── api/                  # API Interface
+│   │   ├── auth/                 # Authentication System
+│   │   ├── cache/                # Caching (Redis)
+│   │   ├── database/             # Databases
+│   │   └── stripe/               # Stripe Integration
+│   └── utils/                    # Utility Tools
+├── docs/                         # Documentation
+├── logs/                         # Log Files
+└── package.json                  # Project Dependencies
 ```
 
 ---
 
-## ⚙️ نظام الإعدادات (Configuration System)
+## ⚙️ Configuration System
 
-### 📂 ملفات البيئة
+### 📂 Environment Files
 
-يستخدم المشروع نظام إعدادات متقدم مع ملفات `.env` منفصلة لكل مكون:
+The project uses an advanced configuration system with separate `.env` files for each component:
 
-| الملف | الوصف |
-|-------|-------|
-| `Server.env` | إعدادات الخادم (المنفذ، البيئة، URL) |
-| `Database.env` | إعدادات قواعد البيانات (PostgreSQL, MongoDB, Redis) |
-| `Security.env` | إعدادات الأمان (JWT, CORS, API Keys) |
-| `Stripe.env` | إعدادات Stripe للمدفوعات |
-| `SessionCookies.env` | إعدادات الجلسات والكوكيز |
+| File | Description |
+|------|-------------|
+| `Server.env` | Server Settings (Port, Environment, URL) |
+| `Database.env` | Database Settings (PostgreSQL, MongoDB, Redis) |
+| `Security.env` | Security Settings (JWT, CORS, API Keys) |
+| `Stripe.env` | Stripe Payment Settings |
+| `SessionCookies.env` | Session and Cookie Settings |
 | `IntegratedAuthentication.env` | OAuth (Google, Facebook, GitHub) |
-| `Notifications.env` | البريد الإلكتروني (SMTP) و SMS (Twilio) |
-| `FileStorage.env` | تخزين الملفات (Local/AWS S3) |
+| `Notifications.env` | Email (SMTP) and SMS (Twilio) |
+| `FileStorage.env` | File Storage (Local/AWS S3) |
 
-### 🔧 إعدادات الخادم (`server.config.ts`)
+### 🔧 Server Configuration (`server.config.ts`)
 
 ```typescript
 interface ServerConfigEnv {
-  SERVER_HOST: string;     // عنوان الخادم (افتراضي: 0.0.0.0)
-  SERVER_PORT: number;     // المنفذ (افتراضي: 3003)
+  SERVER_HOST: string;     // Server Address (default: 0.0.0.0)
+  SERVER_PORT: number;     // Port (default: 3003)
   NODE_ENV: 'development' | 'production' | 'testing';
-  BASE_URL: string;        // URL الأساسي للـ API
+  BASE_URL: string;        // Base URL for API
 }
 ```
 
-### 🔐 إعدادات الأمان (`security.config.ts`)
+### 🔐 Security Configuration (`security.config.ts`)
 
 ```typescript
 interface SecurityConfigEnv {
-  JWT_SECRET: string;              // مفتاح JWT
-  JWT_EXPIRES_IN: string;          // مدة صلاحية Access Token (افتراضي: 1h)
-  JWT_REFRESH_EXPIRES_IN: string;  // مدة صلاحية Refresh Token (افتراضي: 7d)
-  API_KEY: string;                 // مفتاح API
-  BOT_TOKEN: string;               // توكن Discord Bot
-  CORS_ORIGIN: string;             // Origins المسموح بها (مفصولة بفاصلة)
-  CORS_METHODS: string;            // HTTP Methods المسموح بها
-  CORS_CREDENTIALS: string;        // السماح بإرسال Credentials
+  JWT_SECRET: string;              // JWT Secret Key
+  JWT_EXPIRES_IN: string;          // Access Token Expiry (default: 1h)
+  JWT_REFRESH_EXPIRES_IN: string;  // Refresh Token Expiry (default: 7d)
+  API_KEY: string;                 // API Key
+  BOT_TOKEN: string;               // Discord Bot Token
+  CORS_ORIGIN: string;             // Allowed Origins (comma-separated)
+  CORS_METHODS: string;            // Allowed HTTP Methods
+  CORS_CREDENTIALS: string;        // Allow Credentials
 }
 ```
 
-### 💳 إعدادات Stripe (`stripe.config.ts`)
+### 💳 Stripe Configuration (`stripe.config.ts`)
 
 ```typescript
 interface StripeConfig {
-  stripeServerUrl: string;    // URL خادم Stripe الخارجي (البورت 4242)
-  publishableKey: string;     // Publishable Key للـ Frontend
+  stripeServerUrl: string;    // External Stripe Server URL (port 4242)
+  publishableKey: string;     // Publishable Key for Frontend
   webhookSecret: string;      // Webhook Secret
-  adminApiKey: string;        // Admin API Key للتواصل الداخلي
-  apiVersion: string;         // إصدار API
+  adminApiKey: string;        // Admin API Key for Internal Communication
+  apiVersion: string;         // API Version
 }
 ```
 
-### 🗄️ إعدادات قواعد البيانات (`database.config.ts`)
+### 🗄️ Database Configuration (`database.config.ts`)
 
 ```typescript
 // PostgreSQL
@@ -146,7 +146,7 @@ interface MongoDBConfig {
 
 // Redis
 interface RedisConfig {
-  available: boolean;  // هل Redis متاح؟
+  available: boolean;  // Is Redis available?
   host: string;
   port: number;
   password: string;
@@ -156,167 +156,167 @@ interface RedisConfig {
 
 ---
 
-## 🛡️ نظام Middlewares
+## 🛡️ Middlewares System
 
 ### 🔒 Security Middlewares
 
 #### 1. CORS Middleware (`cors.middleware.ts`)
-- التحقق من Origins المسموح بها
-- إحصائيات الطلبات (allowed, blocked, noOrigin)
-- دعم Preflight Requests
+- Validation of allowed Origins
+- Request statistics (allowed, blocked, noOrigin)
+- Preflight Requests support
 
 ```typescript
-// إعدادات CORS
+// CORS Configuration
 const corsOptions: CorsOptions = {
   origin: originValidator,
   methods: CORS_METHODS.split(','),
   allowedHeaders: CORS_HEADERS.split(','),
   credentials: CORS_CREDENTIALS,
-  maxAge: 86400,  // 24 ساعة
+  maxAge: 86400,  // 24 hours
 };
 ```
 
 #### 2. Helmet Middleware (`helmet.middleware.ts`)
 - Content Security Policy (CSP)
 - HTTP Strict Transport Security (HSTS)
-- X-Frame-Options (منع clickjacking)
+- X-Frame-Options (prevent clickjacking)
 - XSS Filter
 - No Sniff
-- إخفاء X-Powered-By
+- Hide X-Powered-By
 
 #### 3. Rate Limiter Middleware (`rateLimiter.middleware.ts`)
-- حماية من هجمات Brute Force
-- استخدام Redis للتخزين المؤقت
-- إعدادات مخصصة لكل نوع طلب
+- Protection against Brute Force attacks
+- Uses Redis for caching
+- Custom settings for each request type
 
 ```typescript
-// أنواع Rate Limiters
-authRateLimiter:    5 طلبات / 15 دقيقة    // تسجيل الدخول
-generalRateLimiter: 100 طلب / 15 دقيقة   // الطلبات العامة
-strictRateLimiter:  10 طلبات / 5 دقائق   // الطلبات الحساسة
+// Rate Limiter Types
+authRateLimiter:    5 requests / 15 minutes    // Login
+generalRateLimiter: 100 requests / 15 minutes  // General requests
+strictRateLimiter:  10 requests / 5 minutes    // Sensitive requests
 ```
 
 #### 4. Session Middleware (`session.middleware.ts`)
-- تخزين الجلسات في Redis (أو Memory Store كـ Fallback)
-- دعم Secure Cookies في الإنتاج
-- HttpOnly Cookies للحماية من XSS
+- Session storage in Redis (or Memory Store as Fallback)
+- Secure Cookies support in production
+- HttpOnly Cookies for XSS protection
 
 #### 5. XSS Clean Middleware (`xssClean.middleware.ts`)
-- تنظيف المدخلات من أكواد XSS
+- Sanitize inputs from XSS code
 
 ### 📝 Logging Middlewares
 
 #### 1. Request Logger (`requestLogger.middleware.ts`)
-- تسجيل جميع الطلبات باستخدام Morgan
-- يعمل فقط في بيئة التطوير
+- Log all requests using Morgan
+- Works only in development environment
 
 #### 2. Response Time (`responseTime.middleware.ts`)
-- قياس وقت الاستجابة لكل طلب
+- Measure response time for each request
 
 ### ⚠️ Error Handling Middlewares
 
 #### 1. Error Handler (`errorHandler.middleware.ts`)
-- معالجة مركزية للأخطاء
-- إخفاء تفاصيل الأخطاء في الإنتاج
-- تسجيل الأخطاء
+- Centralized error handling
+- Hide error details in production
+- Error logging
 
 #### 2. Not Found (`notFound.middleware.ts`)
-- معالجة الطلبات لمسارات غير موجودة
+- Handle requests for non-existent routes
 
 ### ✅ Validation Middleware (`validation.middleware.ts`)
-- التحقق من البيانات باستخدام Joi
-- دعم params, query, body, headers
-- رسائل خطأ مفصلة
+- Data validation using Joi
+- Support for params, query, body, headers
+- Detailed error messages
 
 ---
 
-## 🔐 نظام المصادقة (Authentication System)
+## 🔐 Authentication System
 
-### 📋 نظرة عامة
+### 📋 Overview
 
-النظام يدعم:
-- ✅ تسجيل الدخول عبر البريد الإلكتروني وكلمة المرور
-- ✅ تسجيل الدخول عبر Google OAuth2
-- ✅ نظام التوكنات (Access Token + Refresh Token)
-- ✅ نظام الأدوار (Owner, Admin, User, Guest)
+The system supports:
+- ✅ Login via email and password
+- ✅ Login via Google OAuth2
+- ✅ Token system (Access Token + Refresh Token)
+- ✅ Role system (Owner, Admin, User, Guest)
 
-### 👥 أنواع المستخدمين
+### 👥 User Types
 
-| الدور | الوصف | الصلاحيات |
-|-------|-------|-----------|
-| **Owner** | مالك النظام | جميع الصلاحيات |
-| **Admin** | مشرف | صلاحيات محددة حسب permissions |
-| **User** | مستخدم عادي | صلاحيات أساسية |
-| **Guest** | زائر | قراءة فقط |
+| Role | Description | Permissions |
+|------|-------------|-------------|
+| **Owner** | System owner | All permissions |
+| **Admin** | Administrator | Specific permissions based on permissions list |
+| **User** | Regular user | Basic permissions |
+| **Guest** | Visitor | Read only |
 
-### 🔑 إدارة التوكنات
+### 🔑 Token Management
 
 ```typescript
-// إنشاء توكن
+// Generate token
 function generateToken(data: { userID: string }, isRefresh: boolean): string;
 
-// التحقق من التوكن
+// Validate token
 function validateToken(token: string): TokenPayload | null;
 ```
 
 ### 🛡️ Role Middleware (`role.middleware.ts`)
 
 ```typescript
-// التحقق من الدور
+// Check role
 checkRole(['owner', 'admin'], ['view_users']);
 
-// التسلسل الهرمي: Owner > Admin > User > Guest
+// Hierarchy: Owner > Admin > User > Guest
 ```
 
 ### 💳 Subscription Middleware (`subscription.middleware.ts`)
 
 ```typescript
-// التحقق من الاشتراك
+// Check subscription
 checkSubscription(['user'], ['Pro', 'Enterprise']);
 
-// خيارات:
-// - verifyFromStripe: التحقق من Stripe مباشرة
-// - customMessage: رسالة خطأ مخصصة
+// Options:
+// - verifyFromStripe: Verify directly from Stripe
+// - customMessage: Custom error message
 ```
 
-### 📍 مسارات المصادقة
+### 📍 Authentication Routes
 
-| المسار | الوصف |
-|--------|-------|
-| `POST /api/v1/auth/register` | تسجيل مستخدم جديد |
-| `POST /api/v1/auth/login/email` | تسجيل الدخول (إيميل + كلمة مرور) |
-| `POST /api/v1/auth/google` | تسجيل الدخول عبر Google |
-| `POST /api/v1/auth/refresh` | تجديد التوكن |
-| `POST /api/v1/auth/logout` | تسجيل الخروج |
-| `GET /api/v1/auth/validate` | التحقق من صلاحية التوكن |
+| Route | Description |
+|-------|-------------|
+| `POST /api/v1/auth/register` | Register new user |
+| `POST /api/v1/auth/login/email` | Login (email + password) |
+| `POST /api/v1/auth/google` | Login via Google |
+| `POST /api/v1/auth/refresh` | Refresh token |
+| `POST /api/v1/auth/logout` | Logout |
+| `GET /api/v1/auth/validate` | Validate token |
 
 ---
 
-## 🗄️ نظام قاعدة البيانات
+## 🗄️ Database System
 
 ### 📊 PostgreSQL (Sequelize ORM)
 
-#### 🔌 إعداد الاتصال (`db.config.ts`)
+#### 🔌 Connection Setup (`db.config.ts`)
 
 ```typescript
 const sequelizeOptions: Options = {
   dialect: 'postgres',
   pool: { max: 200, min: 5 },
   dialectOptions: {
-    ssl: { require: true, rejectUnauthorized: false }  // لـ Supabase
+    ssl: { require: true, rejectUnauthorized: false }  // For Supabase
   }
 };
 ```
 
-### 📋 النماذج (Models)
+### 📋 Models
 
 #### 1. User Model (`User.model.ts`)
 
 ```typescript
 interface UserAttributes {
   id: string;              // UUID
-  email: string;           // فريد
-  password_hash?: string;  // للتسجيل المحلي فقط
+  email: string;           // Unique
+  password_hash?: string;  // For local registration only
   auth_provider: 'local' | 'google';
   google_id?: string;
   first_name?: string;
@@ -356,7 +356,7 @@ interface SubscriptionAttributes {
   cancel_at_period_end: boolean;
 }
 
-// حالات الاشتراك (متوافقة مع Stripe)
+// Subscription statuses (compatible with Stripe)
 enum SubscriptionStatus {
   INCOMPLETE = 'incomplete',
   INCOMPLETE_EXPIRED = 'incomplete_expired',
@@ -374,10 +374,10 @@ enum SubscriptionStatus {
 ```typescript
 interface CarAttributes {
   id: string;           // UUID
-  car_make: string;     // الشركة المصنعة (BMW, Toyota)
-  car_model: string;    // الموديل (325, Camry)
-  car_model_year: number;  // سنة الصنع
-  car_vin: string;      // VIN (17 حرف، فريد)
+  car_make: string;     // Manufacturer (BMW, Toyota)
+  car_model: string;    // Model (325, Camry)
+  car_model_year: number;  // Year of manufacture
+  car_vin: string;      // VIN (17 characters, unique)
   created_at: Date;
   updated_at: Date;
 }
@@ -389,7 +389,7 @@ interface CarAttributes {
 interface ProjectAdminAttributes {
   id: string;
   user_id: string;
-  permissions: string[];  // قائمة الصلاحيات
+  permissions: string[];  // List of permissions
   created_at: Date;
   updated_at: Date;
 }
@@ -412,11 +412,11 @@ interface TokenAttributes {
 
 ---
 
-## 💳 نظام Stripe
+## 💳 Stripe System
 
-### 📋 نظرة عامة
+### 📋 Overview
 
-يتواصل النظام مع **خادم Stripe خارجي** على البورت 4242 بدلاً من استخدام Stripe SDK مباشرة.
+The system communicates with an **external Stripe server** on port 4242 instead of using the Stripe SDK directly.
 
 ### 🔗 Stripe API Client (`stripe.api.ts`)
 
@@ -432,7 +432,7 @@ class StripeApiClient {
 }
 ```
 
-### 📦 خدمات Stripe
+### 📦 Stripe Services
 
 #### 1. Customer Service (`customer.service.ts`)
 
@@ -504,138 +504,138 @@ class StripeRefundsService {
 
 ---
 
-## 🚀 نظام التخزين المؤقت (Redis Cache)
+## 🚀 Caching System (Redis Cache)
 
-### 📋 نظرة عامة
+### 📋 Overview
 
-النظام يستخدم Redis للتخزين المؤقت مع دعم **Batch Processing** لتحسين الأداء.
+The system uses Redis for caching with **Batch Processing** support for performance optimization.
 
 ### 🔧 Redis Queue Batch Manager
 
 ```typescript
-// إعدادات المدير
+// Manager Settings
 interface RedisQueueBatchManagerOptions {
-  batchInterval?: number;      // فترة المعالجة لـ SET/DEL (500ms)
-  getBatchInterval?: number;   // فترة المعالجة لـ GET (25ms)
-  maxBatchSize?: number;       // أقصى حجم دفعة SET/DEL (100,000)
-  getMaxBatchSize?: number;    // أقصى حجم دفعة GET (20,000)
-  enableMetrics?: boolean;     // تفعيل الإحصائيات
+  batchInterval?: number;      // Processing interval for SET/DEL (500ms)
+  getBatchInterval?: number;   // Processing interval for GET (25ms)
+  maxBatchSize?: number;       // Max SET/DEL batch size (100,000)
+  getMaxBatchSize?: number;    // Max GET batch size (20,000)
+  enableMetrics?: boolean;     // Enable metrics
 }
 ```
 
-### 📊 الوظائف المتاحة
+### 📊 Available Functions
 
 ```typescript
-// تخزين قيمة
+// Store value
 cacheSet<T>(key: string, value: T, ttl: number = 3600): void;
 cacheSetAsync<T>(key: string, value: T, ttl: number = 3600): Promise<string>;
 
-// استرجاع قيمة
+// Retrieve value
 cacheGet(key: string): Promise<unknown>;
 
-// حذف قيمة
+// Delete value
 cacheDelete(key: string): void;
 cacheDeleteAsync(key: string): Promise<number>;
 ```
 
 ### 🔄 Fallback
 
-إذا كان Redis غير متاح، يستخدم النظام **In-Memory Cache** كبديل مع تنظيف دوري للمفاتيح المنتهية.
+If Redis is unavailable, the system uses **In-Memory Cache** as an alternative with periodic cleanup of expired keys.
 
 ---
 
-## 🌐 واجهة API (RESTful Routes)
+## 🌐 API Interface (RESTful Routes)
 
-### 📍 المسارات الأساسية
+### 📍 Base Routes
 
-| المسار الأساسي | الوصف |
-|----------------|-------|
-| `/api/v1/auth` | المصادقة |
-| `/api/v1/users` | إدارة المستخدمين |
-| `/api/v1/project-admins` | إدارة مشرفي المشاريع |
-| `/api/v1/subscriptions` | إدارة الاشتراكات |
-| `/api/v1/plans` | الخطط والأسعار |
-| `/api/v1/customers` | عملاء Stripe |
-| `/api/v1/cars` | إدارة السيارات |
+| Base Path | Description |
+|-----------|-------------|
+| `/api/v1/auth` | Authentication |
+| `/api/v1/users` | User Management |
+| `/api/v1/project-admins` | Project Admin Management |
+| `/api/v1/subscriptions` | Subscription Management |
+| `/api/v1/plans` | Plans and Pricing |
+| `/api/v1/customers` | Stripe Customers |
+| `/api/v1/cars` | Vehicle Management |
 
-### 👤 مسارات المستخدمين (`/api/v1/users`)
+### 👤 User Routes (`/api/v1/users`)
 
-| Method | المسار | الوصف | الصلاحيات |
-|--------|--------|-------|-----------|
-| `GET` | `/` | جميع المستخدمين | owner, admin (view_users) |
-| `GET` | `/:id` | مستخدم بالمعرف | owner, admin (view_users) |
-| `GET` | `/email/:email` | مستخدم بالإيميل | owner, admin (view_users) |
-| `PUT` | `/:id` | تحديث مستخدم | owner |
-| `DELETE` | `/:id` | حذف مستخدم | owner |
+| Method | Route | Description | Permissions |
+|--------|-------|-------------|-------------|
+| `GET` | `/` | All users | owner, admin (view_users) |
+| `GET` | `/:id` | User by ID | owner, admin (view_users) |
+| `GET` | `/email/:email` | User by email | owner, admin (view_users) |
+| `PUT` | `/:id` | Update user | owner |
+| `DELETE` | `/:id` | Delete user | owner |
 
-### 💳 مسارات الاشتراكات (`/api/v1/subscriptions`)
+### 💳 Subscription Routes (`/api/v1/subscriptions`)
 
-| Method | المسار | الوصف | الصلاحيات |
-|--------|--------|-------|-----------|
-| `GET` | `/` | جميع الاشتراكات | owner, admin |
-| `GET` | `/me` | اشتراكي | owner, admin, user |
-| `POST` | `/me/cancel` | إلغاء اشتراكي | owner, admin, user |
-| `GET` | `/user/:userId` | اشتراكات مستخدم | owner, admin |
-| `GET` | `/user/:userId/active` | الاشتراك النشط | owner, admin |
-| `GET` | `/statistics` | الإحصائيات | owner |
-| `GET` | `/expiring` | الاشتراكات المنتهية | owner, admin |
+| Method | Route | Description | Permissions |
+|--------|-------|-------------|-------------|
+| `GET` | `/` | All subscriptions | owner, admin |
+| `GET` | `/me` | My subscription | owner, admin, user |
+| `POST` | `/me/cancel` | Cancel my subscription | owner, admin, user |
+| `GET` | `/user/:userId` | User subscriptions | owner, admin |
+| `GET` | `/user/:userId/active` | Active subscription | owner, admin |
+| `GET` | `/statistics` | Statistics | owner |
+| `GET` | `/expiring` | Expiring subscriptions | owner, admin |
 
-### 📋 مسارات الخطط (`/api/v1/plans`)
+### 📋 Plan Routes (`/api/v1/plans`)
 
-| Method | المسار | الوصف | الصلاحيات |
-|--------|--------|-------|-----------|
-| `GET` | `/config` | Stripe Publishable Key | عام |
-| `GET` | `/prices` | جميع الأسعار | عام |
-| `GET` | `/subscription-prices` | أسعار الاشتراكات | عام |
-| `GET` | `/products` | المنتجات مع الأسعار | عام |
-| `GET` | `/prices/:priceId` | سعر محدد | عام |
-| `GET` | `/products/:productId` | منتج محدد | عام |
-| `POST` | `/subscriptions` | إنشاء اشتراك | مصادق |
-| `GET` | `/subscriptions/:id` | اشتراك محدد | مصادق |
-| `POST` | `/subscriptions/:id/cancel` | إلغاء اشتراك | مصادق |
+| Method | Route | Description | Permissions |
+|--------|-------|-------------|-------------|
+| `GET` | `/config` | Stripe Publishable Key | Public |
+| `GET` | `/prices` | All prices | Public |
+| `GET` | `/subscription-prices` | Subscription prices | Public |
+| `GET` | `/products` | Products with prices | Public |
+| `GET` | `/prices/:priceId` | Specific price | Public |
+| `GET` | `/products/:productId` | Specific product | Public |
+| `POST` | `/subscriptions` | Create subscription | Authenticated |
+| `GET` | `/subscriptions/:id` | Specific subscription | Authenticated |
+| `POST` | `/subscriptions/:id/cancel` | Cancel subscription | Authenticated |
 
-### 🚗 مسارات السيارات (`/api/v1/cars`)
+### 🚗 Car Routes (`/api/v1/cars`)
 
-| Method | المسار | الوصف | الصلاحيات |
-|--------|--------|-------|-----------|
-| `GET` | `/` | جميع السيارات | owner, admin, user (+ اشتراك) |
-| `GET` | `/:id` | سيارة بالمعرف | owner, admin, user (+ اشتراك) |
-| `GET` | `/vin/:vin` | سيارة بـ VIN | owner, admin, user (+ اشتراك) |
-| `GET` | `/statistics` | إحصائيات السيارات | owner, admin (view_cars) |
-| `POST` | `/` | إنشاء سيارة | owner, admin (create_cars) |
-| `PUT` | `/:id` | تحديث سيارة | owner, admin (update_cars) |
-| `DELETE` | `/:id` | حذف سيارة | owner, admin (delete_cars) |
+| Method | Route | Description | Permissions |
+|--------|-------|-------------|-------------|
+| `GET` | `/` | All cars | owner, admin, user (+ subscription) |
+| `GET` | `/:id` | Car by ID | owner, admin, user (+ subscription) |
+| `GET` | `/vin/:vin` | Car by VIN | owner, admin, user (+ subscription) |
+| `GET` | `/statistics` | Car statistics | owner, admin (view_cars) |
+| `POST` | `/` | Create car | owner, admin (create_cars) |
+| `PUT` | `/:id` | Update car | owner, admin (update_cars) |
+| `DELETE` | `/:id` | Delete car | owner, admin (delete_cars) |
 
-### 👨‍💼 مسارات مشرفي المشاريع (`/api/v1/project-admins`)
+### 👨‍💼 Project Admin Routes (`/api/v1/project-admins`)
 
-| Method | المسار | الوصف | الصلاحيات |
-|--------|--------|-------|-----------|
-| `GET` | `/` | جميع المشرفين | owner |
-| `GET` | `/:id` | مشرف بالمعرف | owner |
-| `GET` | `/user/:userId` | مشرف بمعرف المستخدم | owner |
-| `GET` | `/permission/:permission` | مشرفين بصلاحية | owner |
-| `POST` | `/` | إنشاء مشرف | owner |
-| `PUT` | `/:id` | تحديث مشرف | owner |
-| `DELETE` | `/:id` | حذف مشرف | owner |
+| Method | Route | Description | Permissions |
+|--------|-------|-------------|-------------|
+| `GET` | `/` | All admins | owner |
+| `GET` | `/:id` | Admin by ID | owner |
+| `GET` | `/user/:userId` | Admin by user ID | owner |
+| `GET` | `/permission/:permission` | Admins by permission | owner |
+| `POST` | `/` | Create admin | owner |
+| `PUT` | `/:id` | Update admin | owner |
+| `DELETE` | `/:id` | Delete admin | owner |
 
 ---
 
-## 🔧 الأدوات المساعدة (Utilities)
+## 🔧 Utilities
 
 ### 📤 Response Handler (`responseHandler.util.ts`)
 
 ```typescript
-// إرسال استجابة موحدة
+// Send unified response
 successResponse(res: Response, data: ResponseData, message?: string, status?: number): Response;
 ```
 
 ### 🔒 Hash Utility (`hash.util.ts`)
 
 ```typescript
-// تشفير كلمة المرور
+// Hash password
 hashPassword(password: string, saltNumber?: number): Promise<string>;
 
-// مقارنة كلمات المرور
+// Compare passwords
 comparePassword(password: string, hash: string): Promise<boolean>;
 ```
 
@@ -647,86 +647,86 @@ logger.info(message);
 logger.error(message);
 logger.warn(message);
 
-// الملفات:
-// - logs/error.log (أخطاء فقط)
-// - logs/combined.log (جميع السجلات)
+// Files:
+// - logs/error.log (errors only)
+// - logs/combined.log (all logs)
 ```
 
 ---
 
-## 🚀 تشغيل المشروع
+## 🚀 Running the Project
 
-### 📋 المتطلبات
+### 📋 Requirements
 
 - Node.js >= 18
 - PostgreSQL
-- Redis (اختياري)
-- حساب Stripe (للمدفوعات)
+- Redis (optional)
+- Stripe account (for payments)
 
-### 💻 أوامر التشغيل
+### 💻 Run Commands
 
 ```bash
-# تثبيت التبعيات
+# Install dependencies
 npm install
 
-# تشغيل بيئة التطوير
+# Run development environment
 npm run dev
 
-# بناء المشروع
+# Build project
 npm run build
 
-# تشغيل الإنتاج
+# Run production
 npm run start
 
-# فحص TypeScript
+# TypeScript check
 npm run typecheck
 
-# فحص Linting
+# Linting check
 npm run lint
 ```
 
-### 🌐 نقاط الوصول
+### 🌐 Access Points
 
-| النقطة | الوصف |
-|--------|-------|
-| `http://localhost:3003` | الصفحة الرئيسية |
-| `http://localhost:3003/health` | فحص صحة الخادم |
-| `http://localhost:3003/api/v1/*` | واجهة API |
-| `http://localhost:3003/cors-stats` | إحصائيات CORS (dev فقط) |
+| Endpoint | Description |
+|----------|-------------|
+| `http://localhost:3003` | Home Page |
+| `http://localhost:3003/health` | Server Health Check |
+| `http://localhost:3003/api/v1/*` | API Interface |
+| `http://localhost:3003/cors-stats` | CORS Statistics (dev only) |
 
 ---
 
-## 🔒 الأمان
+## 🔒 Security
 
-### ✅ ميزات الأمان المُطبقة
+### ✅ Implemented Security Features
 
-1. **Helmet** - حماية HTTP Headers
-2. **CORS** - التحكم في Origins
-3. **Rate Limiting** - حماية من DDoS
-4. **XSS Protection** - منع هجمات XSS
-5. **JWT Authentication** - مصادقة آمنة
-6. **Password Hashing** - تشفير bcrypt
-7. **Secure Sessions** - جلسات Redis
+1. **Helmet** - HTTP Headers protection
+2. **CORS** - Origin control
+3. **Rate Limiting** - DDoS protection
+4. **XSS Protection** - Prevent XSS attacks
+5. **JWT Authentication** - Secure authentication
+6. **Password Hashing** - bcrypt encryption
+7. **Secure Sessions** - Redis sessions
 8. **Input Validation** - Joi schemas
 
-### 🔑 أفضل الممارسات
+### 🔑 Best Practices
 
-- استخدام HTTPS في الإنتاج
-- تغيير JWT_SECRET بانتظام
-- تفعيل secure cookies في الإنتاج
-- مراقبة Rate Limit logs
-- تحديث التبعيات بانتظام
+- Use HTTPS in production
+- Change JWT_SECRET regularly
+- Enable secure cookies in production
+- Monitor Rate Limit logs
+- Update dependencies regularly
 
 ---
 
-## 📊 المراقبة والسجلات
+## 📊 Monitoring and Logs
 
-### 📝 ملفات السجلات
+### 📝 Log Files
 
 ```
 logs/
-├── error.log      # أخطاء فقط
-└── combined.log   # جميع السجلات
+├── error.log      # Errors only
+└── combined.log   # All logs
 ```
 
 ### 📈 Health Check
@@ -748,63 +748,63 @@ GET /health
 }
 ```
 
-## ✅ تنفيذ المتطلبات الأساسية (Requirements Implementation)
+## ✅ Core Requirements Implementation
 
-هذا القسم يوضح كيفية تنفيذ كل متطلب من متطلبات المشروع الأساسية.
+This section explains how each core project requirement has been implemented.
 
 ---
 
-### 1️⃣ Authentication & Roles (المصادقة والأدوار)
+### 1️⃣ Authentication & Roles
 
-#### ✅ User Registration and Login (تسجيل المستخدمين وتسجيل الدخول)
+#### ✅ User Registration and Login
 
-**الملفات المعنية:**
+**Related Files:**
 - [src/modules/auth/routes/auth.route.ts](../src/modules/auth/routes/auth.route.ts)
 - [src/modules/auth/services/auth.service.ts](../src/modules/auth/services/auth.service.ts)
 - [src/modules/database/postgreSQL/services/users.service.ts](../src/modules/database/postgreSQL/services/users.service.ts)
 
-**التنفيذ:**
+**Implementation:**
 
 ```typescript
-// تسجيل مستخدم جديد
+// Register new user
 POST /api/v1/auth/register
 Body: { email, password, first_name?, last_name?, display_name? }
 
-// تسجيل الدخول بالإيميل وكلمة المرور
+// Login with email and password
 POST /api/v1/auth/login/email
 Body: { email, password }
 
-// تسجيل الدخول عبر Google OAuth2
+// Login via Google OAuth2
 POST /api/v1/auth/google
 Body: { credential } // Google ID Token
 ```
 
-**المميزات:**
-- ✅ تسجيل محلي (إيميل + كلمة مرور مشفرة بـ bcrypt)
-- ✅ تسجيل عبر Google OAuth2 (باستخدام `google-auth-library`)
-- ✅ التحقق من صحة البيانات قبل التسجيل
-- ✅ منع تكرار الإيميل
-- ✅ دعم التسجيل أو تسجيل الدخول التلقائي لحسابات Google
+**Features:**
+- ✅ Local registration (email + password encrypted with bcrypt)
+- ✅ Registration via Google OAuth2 (using `google-auth-library`)
+- ✅ Data validation before registration
+- ✅ Prevent duplicate emails
+- ✅ Auto registration or login support for Google accounts
 
 ---
 
-#### ✅ JWT-based Authentication (المصادقة المبنية على JWT)
+#### ✅ JWT-based Authentication
 
-**الملفات المعنية:**
+**Related Files:**
 - [src/modules/auth/services/auth.service.ts](../src/modules/auth/services/auth.service.ts)
 - [src/modules/auth/index.ts](../src/modules/auth/index.ts)
 - [src/config/security.config.ts](../src/config/security.config.ts)
 
-**التنفيذ:**
+**Implementation:**
 
 ```typescript
-// توليد التوكنات
+// Generate tokens
 function generateToken(data: { userID: string }, isRefresh: boolean): string {
   const expiresIn = isRefresh ? JWT_REFRESH_EXPIRES_IN : JWT_EXPIRES_IN;
   return jwt.sign(data, JWT_SECRET, { expiresIn });
 }
 
-// التحقق من التوكن
+// Validate token
 function validateToken(token: string): TokenPayload | null {
   try {
     return jwt.verify(token, JWT_SECRET) as TokenPayload;
@@ -814,41 +814,41 @@ function validateToken(token: string): TokenPayload | null {
 }
 ```
 
-**المميزات:**
-- ✅ Access Token (صلاحية قصيرة - افتراضياً 1 ساعة)
-- ✅ Refresh Token (صلاحية طويلة - افتراضياً 7 أيام)
-- ✅ تخزين التوكنات في قاعدة البيانات للتحقق والإبطال
-- ✅ تجديد التوكن عبر `/api/v1/auth/refresh-token`
-- ✅ التحقق من صلاحية التوكن عبر `/api/v1/auth/validate`
+**Features:**
+- ✅ Access Token (short validity - default 1 hour)
+- ✅ Refresh Token (long validity - default 7 days)
+- ✅ Store tokens in database for validation and revocation
+- ✅ Token refresh via `/api/v1/auth/refresh-token`
+- ✅ Token validation via `/api/v1/auth/validate`
 
-**مسارات التوكن:**
-| المسار | الوصف |
-|--------|-------|
-| `POST /api/v1/auth/refresh-token` | تجديد Access Token باستخدام Refresh Token |
-| `GET /api/v1/auth/validate?token=xxx` | التحقق من صلاحية التوكن وجلب بيانات المستخدم |
-| `GET /api/v1/auth/me` | جلب بيانات المستخدم الحالي |
+**Token Routes:**
+| Route | Description |
+|-------|-------------|
+| `POST /api/v1/auth/refresh-token` | Refresh Access Token using Refresh Token |
+| `GET /api/v1/auth/validate?token=xxx` | Validate token and fetch user data |
+| `GET /api/v1/auth/me` | Get current user data |
 
 ---
 
-#### ✅ Role-based Access Control (التحكم بالوصول حسب الأدوار)
+#### ✅ Role-based Access Control
 
-**الملفات المعنية:**
+**Related Files:**
 - [src/modules/auth/middlewares/role.middleware.ts](../src/modules/auth/middlewares/role.middleware.ts)
 - [src/modules/auth/index.ts](../src/modules/auth/index.ts)
 
-**الأدوار المدعومة:**
+**Supported Roles:**
 
-| الدور | المستوى | الوصف |
-|-------|---------|-------|
-| `owner` | 1 (أعلى) | مالك النظام - جميع الصلاحيات تلقائياً |
-| `admin` | 2 | مشرف - صلاحيات محددة حسب `permissions` |
-| `user` | 3 | مستخدم عادي - صلاحيات أساسية |
-| `guest` | 4 (أدنى) | زائر غير مصادق - قراءة فقط |
+| Role | Level | Description |
+|------|-------|-------------|
+| `owner` | 1 (highest) | System owner - all permissions automatically |
+| `admin` | 2 | Administrator - specific permissions based on `permissions` |
+| `user` | 3 | Regular user - basic permissions |
+| `guest` | 4 (lowest) | Unauthenticated visitor - read only |
 
-**التنفيذ:**
+**Implementation:**
 
 ```typescript
-// Middleware للتحقق من الأدوار
+// Role check middleware
 export const checkRole = (
   roles: UserRole[] = [], 
   adminPermissions: string[] = []
@@ -856,7 +856,7 @@ export const checkRole = (
   return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     const userRole = req.user?.role || 'guest';
 
-    // التسلسل الهرمي: Owner > Admin > User > Guest
+    // Hierarchy: Owner > Admin > User > Guest
     const isAuthorized = roles.includes(userRole) || 
       (userRole === 'owner' && (roles.includes('admin') || roles.includes('user'))) ||
       (userRole === 'admin' && roles.includes('user'));
@@ -866,13 +866,13 @@ export const checkRole = (
       return;
     }
 
-    // Owner معفى من فحص الصلاحيات
+    // Owner is exempt from permission checks
     if (userRole === 'owner') {
       next();
       return;
     }
 
-    // فحص صلاحيات Admin
+    // Check Admin permissions
     if (userRole === 'admin' && adminPermissions.length > 0) {
       const permissions = req.user?.permissions || [];
       const hasAll = adminPermissions.every(p => permissions.includes(p));
@@ -887,54 +887,54 @@ export const checkRole = (
 };
 ```
 
-**أمثلة الاستخدام:**
+**Usage Examples:**
 
 ```typescript
-// السماح فقط للـ Owner
+// Allow only Owner
 router.get('/stats', checkRole(['owner']), controller);
 
-// السماح للـ Owner و Admin (مع صلاحية view_users)
+// Allow Owner and Admin (with view_users permission)
 router.get('/users', checkRole(['owner', 'admin'], ['view_users']), controller);
 
-// السماح لجميع المستخدمين المصادق عليهم
+// Allow all authenticated users
 router.get('/profile', checkRole(['owner', 'admin', 'user']), controller);
 ```
 
-**صلاحيات Admin المتاحة:**
-- `view_users` - عرض المستخدمين
-- `view_cars` - عرض السيارات
-- `create_cars` - إنشاء سيارات
-- `update_cars` - تحديث سيارات
-- `delete_cars` - حذف سيارات
+**Available Admin Permissions:**
+- `view_users` - View users
+- `view_cars` - View cars
+- `create_cars` - Create cars
+- `update_cars` - Update cars
+- `delete_cars` - Delete cars
 
 ---
 
-### 2️⃣ Subscription Logic - Stripe Test Mode (منطق الاشتراكات)
+### 2️⃣ Subscription Logic - Stripe Test Mode
 
-#### ✅ Paid Subscription Plans (خطط الاشتراك المدفوعة)
+#### ✅ Paid Subscription Plans
 
-**الملفات المعنية:**
+**Related Files:**
 - [src/modules/stripe/services/plans.service.ts](../src/modules/stripe/services/plans.service.ts)
 - [src/modules/api/v1/restful/controllers/plans.controller.ts](../src/modules/api/v1/restful/controllers/plans.controller.ts)
 - [src/modules/api/v1/restful/routes/plans.routes.ts](../src/modules/api/v1/restful/routes/plans.routes.ts)
 
-**التنفيذ:**
+**Implementation:**
 
 ```typescript
-// جلب جميع الأسعار النشطة
+// Get all active prices
 GET /api/v1/plans/prices
 
-// جلب أسعار الاشتراكات فقط (recurring)
+// Get subscription prices only (recurring)
 GET /api/v1/plans/subscription-prices
 
-// جلب المنتجات مع أسعارها
+// Get products with their prices
 GET /api/v1/plans/products
 
-// جلب Stripe Publishable Key للـ Frontend
+// Get Stripe Publishable Key for Frontend
 GET /api/v1/plans/config
 ```
 
-**نموذج السعر المُنسق:**
+**Formatted Price Model:**
 ```typescript
 interface FormattedPrice {
   id: string;                    // price_xxx
@@ -942,64 +942,64 @@ interface FormattedPrice {
   productName: string;           // "Pro Plan"
   active: boolean;
   currency: string;              // "USD"
-  unitAmount: number;            // 1999 (بالسنت)
+  unitAmount: number;            // 1999 (in cents)
   unitAmountFormatted: string;   // "$19.99"
   type: 'one_time' | 'recurring';
   interval: 'day' | 'week' | 'month' | 'year';
   intervalCount: number;         // 1
   trialPeriodDays: number | null;
-  features: string[];            // من metadata
+  features: string[];            // from metadata
 }
 ```
 
 ---
 
-#### ✅ Stripe Checkout Integration (تكامل Stripe Checkout)
+#### ✅ Stripe Checkout Integration
 
-**الملفات المعنية:**
+**Related Files:**
 - [src/modules/stripe/services/checkout.service.ts](../src/modules/stripe/services/checkout.service.ts)
 - [src/modules/stripe/services/stripe-subscriptions.service.ts](../src/modules/stripe/services/stripe-subscriptions.service.ts)
 
-**التنفيذ:**
+**Implementation:**
 
 ```typescript
-// إنشاء جلسة Checkout للاشتراك
+// Create Checkout session for subscription
 POST /api/v1/plans/subscriptions
 Body: {
-  customerId?: string,      // معرف العميل في Stripe (اختياري)
-  priceId: string,          // معرف السعر (مطلوب)
-  quantity?: number,        // الكمية (افتراضي: 1)
-  trialPeriodDays?: number, // أيام التجربة المجانية
-  paymentBehavior?: string, // سلوك الدفع
-  couponId?: string,        // كوبون خصم
-  metadata?: object         // بيانات إضافية
+  customerId?: string,      // Stripe customer ID (optional)
+  priceId: string,          // Price ID (required)
+  quantity?: number,        // Quantity (default: 1)
+  trialPeriodDays?: number, // Free trial days
+  paymentBehavior?: string, // Payment behavior
+  couponId?: string,        // Discount coupon
+  metadata?: object         // Additional data
 }
 ```
 
-**مسار إنشاء اشتراك:**
-1. التحقق من المستخدم المصادق (`req.user`)
-2. البحث عن/إنشاء عميل Stripe بالإيميل
-3. إنشاء الاشتراك في Stripe مع `metadata: { user_id }`
-4. حفظ الاشتراك في قاعدة البيانات المحلية
-5. إرجاع `clientSecret` للدفع (إذا كان incomplete)
+**Subscription Creation Flow:**
+1. Verify authenticated user (`req.user`)
+2. Find/create Stripe customer by email
+3. Create subscription in Stripe with `metadata: { user_id }`
+4. Save subscription in local database
+5. Return `clientSecret` for payment (if incomplete)
 
 ```typescript
-// خدمة إنشاء الاشتراك
+// Subscription creation service
 async createSubscription(data: CreateStripeSubscriptionData) {
-  // التحقق من عدم وجود اشتراك نشط
+  // Check for existing active subscription
   const [existingActive] = await SubscriptionsService.getActiveByUserId(data.userId);
   if (existingActive) {
     return [null, new Error('User already has an active subscription')];
   }
 
-  // إنشاء الاشتراك في Stripe Server (البورت 4242)
+  // Create subscription in Stripe Server (port 4242)
   const [response, error] = await stripeApi.post('/subscriptions', {
     priceId: data.priceId,
     quantity: data.quantity || 1,
     metadata: { user_id: data.userId, ...data.metadata }
   }, idempotencyKey, data.customerId);
 
-  // مزامنة مع قاعدة البيانات المحلية
+  // Sync with local database
   await this.syncToDatabase(data.userId, formattedSubscription);
 
   return [formattedSubscription, null];
@@ -1008,22 +1008,22 @@ async createSubscription(data: CreateStripeSubscriptionData) {
 
 ---
 
-#### ✅ Webhook Handling (معالجة Webhooks)
+#### ✅ Webhook Handling
 
-**الأحداث المدعومة:**
+**Supported Events:**
 
-| الحدث | الوصف | الإجراء |
-|-------|-------|---------|
-| `customer.subscription.created` | إنشاء اشتراك جديد | مزامنة مع DB المحلية |
-| `customer.subscription.updated` | تحديث اشتراك | تحديث الحالة في DB المحلية |
-| `customer.subscription.deleted` | حذف/إلغاء اشتراك | تحديث الحالة إلى `canceled` |
-| `invoice.payment_succeeded` | نجاح الدفع | تسجيل العملية |
-| `invoice.payment_failed` | فشل الدفع | تسجيل وإشعار |
+| Event | Description | Action |
+|-------|-------------|--------|
+| `customer.subscription.created` | New subscription created | Sync with local DB |
+| `customer.subscription.updated` | Subscription updated | Update status in local DB |
+| `customer.subscription.deleted` | Subscription deleted/canceled | Update status to `canceled` |
+| `invoice.payment_succeeded` | Payment succeeded | Log transaction |
+| `invoice.payment_failed` | Payment failed | Log and notify |
 
-**التنفيذ:**
+**Implementation:**
 
 ```typescript
-// معالجة Webhook في stripe-subscriptions.service.ts
+// Webhook handling in stripe-subscriptions.service.ts
 async handleWebhookEvent(event: { type: string; data: { object: any } }) {
   switch (event.type) {
     case 'customer.subscription.created':
@@ -1044,7 +1044,7 @@ async handleWebhookEvent(event: { type: string; data: { object: any } }) {
       const userId = subscription.metadata?.user_id;
 
       if (userId) {
-        // تحديث الحالة إلى canceled
+        // Update status to canceled
         await SubscriptionsService.update(subscription.id, {
           status: SubscriptionStatus.CANCELED,
           canceled_at: new Date()
@@ -1059,15 +1059,15 @@ async handleWebhookEvent(event: { type: string; data: { object: any } }) {
 
 ---
 
-#### ✅ User Access Control Based on Subscription (التحكم بالوصول حسب الاشتراك)
+#### ✅ User Access Control Based on Subscription
 
-**الملفات المعنية:**
+**Related Files:**
 - [src/modules/auth/middlewares/subscription.middleware.ts](../src/modules/auth/middlewares/subscription.middleware.ts)
 
-**التنفيذ:**
+**Implementation:**
 
 ```typescript
-// Middleware للتحقق من الاشتراك
+// Subscription check middleware
 export const checkSubscription = (
   applyToRoles: UserRole[] = ['user'], 
   plans: string[],
@@ -1076,19 +1076,19 @@ export const checkSubscription = (
   return async (req, res, next) => {
     const user = req.user;
 
-    // Owner دائماً معفى
+    // Owner is always exempt
     if (user?.role === 'owner') {
       next();
       return;
     }
 
-    // التحقق إذا كان الدور يحتاج اشتراك
+    // Check if role requires subscription
     if (!applyToRoles.includes(user.role)) {
       next();
       return;
     }
 
-    // التحقق من الاشتراك
+    // Verify subscription
     let hasValidSubscription = false;
     
     if (options.verifyFromStripe) {
@@ -1110,22 +1110,22 @@ export const checkSubscription = (
 };
 ```
 
-**حالات الاشتراك والوصول:**
+**Subscription Status and Access:**
 
-| حالة الاشتراك | الوصول مسموح؟ |
-|---------------|---------------|
-| `active` | ✅ نعم |
-| `trialing` | ✅ نعم |
-| `past_due` | ⚠️ محدود (حسب الإعداد) |
-| `canceled` | ❌ لا |
-| `unpaid` | ❌ لا |
-| `paused` | ❌ لا |
-| `incomplete` | ❌ لا |
+| Subscription Status | Access Allowed? |
+|---------------------|-----------------|
+| `active` | ✅ Yes |
+| `trialing` | ✅ Yes |
+| `past_due` | ⚠️ Limited (configurable) |
+| `canceled` | ❌ No |
+| `unpaid` | ❌ No |
+| `paused` | ❌ No |
+| `incomplete` | ❌ No |
 
-**مثال الاستخدام:**
+**Usage Example:**
 
 ```typescript
-// مسار السيارات - يتطلب اشتراك "test subscription" للمستخدمين العاديين
+// Car route - requires "test subscription" for regular users
 router.get(
   '/',
   checkRole(['owner', 'admin', 'user']),
@@ -1134,24 +1134,24 @@ router.get(
 );
 ```
 
-**التحقق المزدوج (Stripe + Local DB):**
+**Dual Verification (Stripe + Local DB):**
 
 ```typescript
-// التحقق من قاعدة البيانات المحلية لحالات الإلغاء اليدوي
+// Check local database for manual cancellation
 async function verifySubscriptionFromStripe(user, allowedPlans) {
-  // 1. جلب الاشتراكات من Stripe
+  // 1. Fetch subscriptions from Stripe
   const [stripeSubscriptions] = await stripeSubscriptionsService.getCustomerSubscriptions(customerId);
 
   for (const sub of stripeSubscriptions) {
-    // 2. التحقق من الحالة المحلية (قد تكون مختلفة)
+    // 2. Check local status (may be different)
     const [localSub] = await SubscriptionsService.getByStripeSubscriptionId(sub.id);
     
     if (localSub?.status === 'canceled' || localSub?.status === 'paused') {
-      // الاشتراك ملغى محلياً، تجاهله
+      // Subscription canceled locally, ignore it
       continue;
     }
 
-    // 3. التحقق من الخطة
+    // 3. Check plan
     if (allowedPlans.includes(sub.planName)) {
       return true;
     }
@@ -1162,26 +1162,26 @@ async function verifySubscriptionFromStripe(user, allowedPlans) {
 
 ---
 
-#### ✅ Stripe Webhook Signature Verification (التحقق من توقيع Webhook)
+#### ✅ Stripe Webhook Signature Verification
 
-**التنفيذ:**
+**Implementation:**
 
-يتم التحقق من توقيع Webhook على مستوى **Stripe Server** (البورت 4242) باستخدام:
+Webhook signature verification is done at the **Stripe Server** level (port 4242) using:
 
 ```typescript
-// في stripe_server (خادم منفصل)
+// In stripe_server (separate server)
 const sig = req.headers['stripe-signature'];
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 try {
   const event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-  // معالجة الحدث
+  // Process event
 } catch (err) {
   return res.status(400).send(`Webhook Error: ${err.message}`);
 }
 ```
 
-**الإعداد في `stripe.config.ts`:**
+**Configuration in `stripe.config.ts`:**
 
 ```typescript
 export const stripeConfig = {
@@ -1192,22 +1192,22 @@ export const stripeConfig = {
 
 ---
 
-### 3️⃣ User Dashboard (لوحة تحكم المستخدم)
+### 3️⃣ User Dashboard
 
-#### ✅ Protected Route (مسار محمي)
+#### ✅ Protected Route
 
-**الملفات المعنية:**
+**Related Files:**
 - [src/modules/api/v1/restful/routes/cars.routes.ts](../src/modules/api/v1/restful/routes/cars.routes.ts)
 - [src/modules/api/v1/restful/controllers/cars.controller.ts](../src/modules/api/v1/restful/controllers/cars.controller.ts)
 
-**التنفيذ:**
+**Implementation:**
 
 ```typescript
-// مسار محمي يتطلب مصادقة + اشتراك نشط
+// Protected route requiring authentication + active subscription
 router.get(
   '/',
-  checkRole(['owner', 'admin', 'user']),           // التحقق من المصادقة والدور
-  checkSubscription(['user'], ['test subscription']), // التحقق من الاشتراك
+  checkRole(['owner', 'admin', 'user']),           // Check authentication and role
+  checkSubscription(['user'], ['test subscription']), // Check subscription
   carsController.getAllCars
 );
 ```
@@ -1216,29 +1216,29 @@ router.get(
 
 #### ✅ Display Sample Records with Search, Pagination & Filtering
 
-**التنفيذ في `cars.controller.ts`:**
+**Implementation in `cars.controller.ts`:**
 
 ```typescript
 export const getAllCars = async (req, res, next) => {
   const { limit, offset, order, search, make, year } = req.query;
 
   const options: QueryOptions = {
-    limit: Math.min(parseInt(limit) || 50, 200),  // حد أقصى 200
+    limit: Math.min(parseInt(limit) || 50, 200),  // Max 200
     offset: parseInt(offset) || 0,
     order: order ? JSON.parse(order) : undefined
   };
 
   let cars, error;
 
-  // 🔍 البحث (Search)
+  // 🔍 Search
   if (search) {
     [cars, error] = await CarsService.search(search, options);
   } 
-  // 🏭 فلترة حسب الشركة المصنعة (Filtering)
+  // 🏭 Filter by manufacturer
   else if (make) {
     [cars, error] = await CarsService.getByMake(make, options);
   } 
-  // 📅 فلترة حسب سنة الصنع (Filtering)
+  // 📅 Filter by year
   else if (year) {
     [cars, error] = await CarsService.getByYear(parseInt(year), options);
   } 
@@ -1246,10 +1246,10 @@ export const getAllCars = async (req, res, next) => {
     [cars, error] = await CarsService.getAll(options);
   }
 
-  // 📊 جلب العدد الكلي للـ Pagination
+  // 📊 Get total count for Pagination
   const [totalCount] = await CarsService.count();
 
-  // 📄 حساب بيانات Pagination
+  // 📄 Calculate Pagination data
   const count = totalCount || 0;
   const nextOffset = offset ? parseInt(offset) + currentLimit : currentLimit;
   const left = Math.max(0, count - nextOffset);
@@ -1257,25 +1257,25 @@ export const getAllCars = async (req, res, next) => {
   send(res, { 
     success: true, 
     data: result, 
-    count,        // العدد الكلي
-    nextOffset,   // الـ offset التالي
-    left          // المتبقي
+    count,        // Total count
+    nextOffset,   // Next offset
+    left          // Remaining
   }, 'Success', 200);
 };
 ```
 
 **Query Parameters:**
 
-| Parameter | النوع | الوصف | مثال |
-|-----------|-------|-------|------|
-| `limit` | number | عدد النتائج (max: 200) | `?limit=10` |
-| `offset` | number | بداية النتائج | `?offset=20` |
-| `search` | string | البحث في make, model, VIN | `?search=BMW` |
-| `make` | string | فلترة حسب الشركة | `?make=Toyota` |
-| `year` | number | فلترة حسب السنة | `?year=2023` |
-| `order` | JSON | ترتيب النتائج | `?order=[["car_make","ASC"]]` |
+| Parameter | Type | Description | Example |
+|-----------|------|-------------|---------|
+| `limit` | number | Number of results (max: 200) | `?limit=10` |
+| `offset` | number | Starting point | `?offset=20` |
+| `search` | string | Search in make, model, VIN | `?search=BMW` |
+| `make` | string | Filter by manufacturer | `?make=Toyota` |
+| `year` | number | Filter by year | `?year=2023` |
+| `order` | JSON | Sort results | `?order=[["car_make","ASC"]]` |
 
-**مثال الاستجابة:**
+**Response Example:**
 
 ```json
 {
@@ -1289,18 +1289,18 @@ export const getAllCars = async (req, res, next) => {
       "car_vin": "WBAPH5C55BA123456"
     }
   ],
-  "count": 150,       // إجمالي السجلات
-  "nextOffset": 10,   // للصفحة التالية
-  "left": 140,        // المتبقي
+  "count": 150,       // Total records
+  "nextOffset": 10,   // For next page
+  "left": 140,        // Remaining
   "message": "Success"
 }
 ```
 
 ---
 
-#### ✅ Server-side Pagination (الترقيم من جانب الخادم)
+#### ✅ Server-side Pagination
 
-**التنفيذ في `cars.service.ts`:**
+**Implementation in `cars.service.ts`:**
 
 ```typescript
 async getAll(options?: QueryOptions): Promise<[Car[] | null, Error | null]> {
@@ -1335,30 +1335,30 @@ async search(query: string, options?: QueryOptions): Promise<[Car[] | null, Erro
 
 ---
 
-### 4️⃣ Admin Panel (لوحة تحكم المشرف)
+### 4️⃣ Admin Panel
 
-#### ✅ Admin-only Access (الوصول للمشرفين فقط)
+#### ✅ Admin-only Access
 
-**الملفات المعنية:**
+**Related Files:**
 - [src/modules/api/v1/restful/routes/users.routes.ts](../src/modules/api/v1/restful/routes/users.routes.ts)
 - [src/modules/api/v1/restful/routes/subscriptions.routes.ts](../src/modules/api/v1/restful/routes/subscriptions.routes.ts)
 - [src/modules/api/v1/restful/routes/projectAdmins.routes.ts](../src/modules/api/v1/restful/routes/projectAdmins.routes.ts)
 
-**التنفيذ:**
+**Implementation:**
 
 ```typescript
-// مسارات للـ Admin فقط (مع صلاحية view_users)
+// Admin-only routes (with view_users permission)
 router.get('/', checkRole(['owner', 'admin'], ['view_users']), usersController.getAllUsers);
 
-// مسارات للـ Owner فقط
+// Owner-only routes
 router.get('/statistics', checkRole(['owner']), subscriptionsController.getSubscriptionStatistics);
 ```
 
 ---
 
-#### ✅ View All Users (عرض جميع المستخدمين)
+#### ✅ View All Users
 
-**المسار:** `GET /api/v1/users`
+**Route:** `GET /api/v1/users`
 
 ```typescript
 export const getAllUsers = async (req, res, next) => {
@@ -1367,7 +1367,7 @@ export const getAllUsers = async (req, res, next) => {
   const [users, error] = await UsersService.getAll(options);
   const [totalCount] = await UsersService.count();
 
-  // فلترة حسب البحث
+  // Filter by search
   if (search) {
     filteredUsers = users.filter(user => 
       user.email?.toLowerCase().includes(search) ||
@@ -1375,7 +1375,7 @@ export const getAllUsers = async (req, res, next) => {
     );
   }
 
-  // فلترة حسب نوع المصادقة (local/google)
+  // Filter by auth type (local/google)
   if (auth_provider && auth_provider !== 'all') {
     filteredUsers = filteredUsers.filter(user => user.auth_provider === auth_provider);
   }
@@ -1386,42 +1386,42 @@ export const getAllUsers = async (req, res, next) => {
 
 ---
 
-#### ✅ View User Subscription Status (عرض حالة اشتراك المستخدم)
+#### ✅ View User Subscription Status
 
-**المسارات:**
+**Routes:**
 
 ```typescript
-// اشتراكات مستخدم محدد
+// Subscriptions for a specific user
 GET /api/v1/subscriptions/user/:userId
 Access: owner, admin
 
-// الاشتراك النشط لمستخدم محدد
+// Active subscription for a specific user
 GET /api/v1/subscriptions/user/:userId/active
 Access: owner, admin
 
-// جميع الاشتراكات
+// All subscriptions
 GET /api/v1/subscriptions
 Access: owner, admin
 Query: ?status=active&plan_name=Pro
 
-// إحصائيات الاشتراكات
+// Subscription statistics
 GET /api/v1/subscriptions/statistics
 Access: owner only
 ```
 
-**التنفيذ:**
+**Implementation:**
 
 ```typescript
 export const getSubscriptionsByUserId = async (req, res, next) => {
   const userId = req.params.userId;
 
-  // جلب من Stripe مع مزامنة تلقائية
+  // Fetch from Stripe with auto-sync
   const [user] = await UsersService.getById(userId);
   const [stripeCustomers] = await stripeCustomerService.findAllByEmail(user.email);
   
   for (const customer of stripeCustomers) {
     const [subs] = await stripeSubscriptionsService.getCustomerSubscriptions(customer.id);
-    // مزامنة كل اشتراك مع DB المحلية
+    // Sync each subscription with local DB
     for (const sub of subs) {
       await SubscriptionsService.upsertFromStripe(sub.stripeSubscriptionId, {...});
     }
@@ -1433,85 +1433,85 @@ export const getSubscriptionsByUserId = async (req, res, next) => {
 
 ---
 
-#### ✅ Enable/Disable User Access Manually (تمكين/تعطيل وصول المستخدم يدوياً)
+#### ✅ Enable/Disable User Access Manually
 
-**المسارات:**
+**Routes:**
 
 ```typescript
-// إلغاء اشتراك يدوياً
+// Cancel subscription manually
 POST /api/v1/subscriptions/:id/cancel
 Access: owner only
 
-// إيقاف اشتراك مؤقتاً
+// Pause subscription temporarily
 POST /api/v1/subscriptions/:id/pause
 Access: owner only
 
-// استئناف اشتراك موقوف
+// Resume paused subscription
 POST /api/v1/subscriptions/:id/resume
 Access: owner only
 
-// تفعيل اشتراك
+// Activate subscription
 POST /api/v1/subscriptions/:id/activate
 Access: owner only
 ```
 
-**التنفيذ:**
+**Implementation:**
 
 ```typescript
-// إلغاء اشتراك (Admin Override)
+// Cancel subscription (Admin Override)
 export const cancelSubscription = async (req, res, next) => {
   const id = req.params.id;
   
-  // تحديث الحالة في DB المحلية مباشرة
+  // Update status in local DB directly
   const [result, error] = await SubscriptionsService.cancel(id);
   
-  // ملاحظة: هذا يلغي الاشتراك محلياً حتى لو كان نشطاً في Stripe
-  // مفيد للـ Admin Override
+  // Note: This cancels the subscription locally even if active in Stripe
+  // Useful for Admin Override
   
-  send(res, { success: true, data: result }, 'تم إلغاء الاشتراك بنجاح');
+  send(res, { success: true, data: result }, 'Subscription canceled successfully');
 };
 
-// في subscription.middleware.ts - التحقق المزدوج
+// In subscription.middleware.ts - Dual verification
 const [localSubscription] = await SubscriptionsService.getByStripeSubscriptionId(sub.id);
 if (localSubscription?.status === 'canceled' || localSubscription?.status === 'paused') {
-  // الاشتراك معطل محلياً بواسطة Admin
-  continue; // رفض الوصول حتى لو نشط في Stripe
+  // Subscription disabled locally by Admin
+  continue; // Deny access even if active in Stripe
 }
 ```
 
-**إدارة صلاحيات Admin:**
+**Admin Permission Management:**
 
 ```typescript
-// إنشاء مشرف جديد
+// Create new admin
 POST /api/v1/project-admins
 Body: { user_id: "uuid", permissions: ["view_users", "view_cars"] }
 
-// إضافة صلاحية
+// Add permission
 POST /api/v1/project-admins/:id/permissions
 Body: { permission: "create_cars" }
 
-// إزالة صلاحية
+// Remove permission
 DELETE /api/v1/project-admins/:id/permissions
 Body: { permission: "delete_cars" }
 ```
 
 ---
 
-### 5️⃣ Security & Best Practices (الأمان وأفضل الممارسات)
+### 5️⃣ Security & Best Practices
 
-#### ✅ Environment Variables for Secrets (متغيرات البيئة للأسرار)
+#### ✅ Environment Variables for Secrets
 
-**الملفات:**
+**Files:**
 - `src/config/environments/*.env`
 
-| الملف | المحتوى |
-|-------|---------|
+| File | Content |
+|------|---------|
 | `Security.env` | JWT_SECRET, API_KEY, CORS settings |
 | `Database.env` | DB credentials (PostgreSQL, MongoDB, Redis) |
 | `Stripe.env` | Stripe keys and secrets |
 | `IntegratedAuthentication.env` | OAuth credentials |
 
-**مثال `Security.env`:**
+**Example `Security.env`:**
 
 ```env
 JWT_SECRET=your-super-secret-key-here
@@ -1521,7 +1521,7 @@ API_KEY=your-api-key
 CORS_ORIGIN=http://localhost:3000,https://yourdomain.com
 ```
 
-**القراءة الآمنة:**
+**Secure Reading:**
 
 ```typescript
 // security.config.ts
@@ -1535,53 +1535,53 @@ export const JWT_SECRET = process.env.JWT_SECRET || (() => {
 
 ---
 
-#### ✅ Secure Password Hashing (تشفير كلمات المرور)
+#### ✅ Secure Password Hashing
 
-**الملف:** [src/utils/hash.util.ts](../src/utils/hash.util.ts)
+**File:** [src/utils/hash.util.ts](../src/utils/hash.util.ts)
 
 ```typescript
 import bcrypt from 'bcrypt';
 
 const SALT_ROUNDS = 10;
 
-// تشفير كلمة المرور
+// Hash password
 export async function hashPassword(password: string, saltRounds = SALT_ROUNDS): Promise<string> {
   return bcrypt.hash(password, saltRounds);
 }
 
-// مقارنة كلمة المرور
+// Compare passwords
 export async function comparePassword(password: string, hash: string): Promise<boolean> {
   return bcrypt.compare(password, hash);
 }
 ```
 
-**الاستخدام:**
+**Usage:**
 
 ```typescript
-// عند التسجيل
+// During registration
 const password_hash = await hashPassword(password);
 await UsersService.registerLocal({ email, password_hash });
 
-// عند تسجيل الدخول
+// During login
 const isValid = await comparePassword(password, user.password_hash);
 ```
 
 ---
 
-#### ✅ Input Validation (التحقق من المدخلات)
+#### ✅ Input Validation
 
-**الملفات:**
+**Files:**
 - [src/modules/api/v1/restful/validators/*.validator.ts](../src/modules/api/v1/restful/validators/)
 - [src/middlewares/validation/validation.middleware.ts](../src/middlewares/validation/validation.middleware.ts)
 
-**التنفيذ باستخدام Joi:**
+**Implementation using Joi:**
 
 ```typescript
 // cars.validator.ts
 export const createCarSchema = {
   body: Joi.object({
     car_make: Joi.string().trim().min(1).max(100).required()
-      .messages({ 'any.required': 'شركة التصنيع مطلوبة' }),
+      .messages({ 'any.required': 'Manufacturer is required' }),
     
     car_model: Joi.string().trim().min(1).max(100).required(),
     
@@ -1627,13 +1627,13 @@ export default function validationMiddlewareFactory(
       });
     }
 
-    req[property] = value; // استخدام القيم المُنظفة
+    req[property] = value; // Use sanitized values
     next();
   };
 }
 ```
 
-**الاستخدام في Routes:**
+**Usage in Routes:**
 
 ```typescript
 router.post(
@@ -1646,9 +1646,9 @@ router.post(
 
 ---
 
-#### ✅ Clean Error Handling (معالجة الأخطاء النظيفة)
+#### ✅ Clean Error Handling
 
-**الملفات:**
+**Files:**
 - [src/middlewares/errors/errorHandler.middleware.ts](../src/middlewares/errors/errorHandler.middleware.ts)
 - [src/utils/errors/errorResolver.util.ts](../src/utils/errors/errorResolver.util.ts)
 
@@ -1661,10 +1661,10 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  // تسجيل الخطأ
+  // Log error
   logger.error(err.message, { stack: err.stack, path: req.path });
 
-  // إخفاء التفاصيل في الإنتاج
+  // Hide details in production
   const response = {
     success: false,
     error: process.env.NODE_ENV === 'production' 
@@ -1677,10 +1677,10 @@ export const errorHandler = (
 };
 ```
 
-**نمط Result Tuple:**
+**Result Tuple Pattern:**
 
 ```typescript
-// جميع الـ Services تُرجع [result, error]
+// All Services return [result, error]
 const [user, error] = await UsersService.getById(id);
 
 if (error) {
@@ -1696,16 +1696,16 @@ if (!user) {
 
 ---
 
-#### ✅ Logical and Readable Project Structure (هيكل مشروع منطقي)
+#### ✅ Logical and Readable Project Structure
 
 ```
 backend/
 ├── src/
-│   ├── app.ts                     # تهيئة Express
-│   ├── server.ts                  # نقطة الدخول
+│   ├── app.ts                     # Express configuration
+│   ├── server.ts                  # Entry point
 │   │
-│   ├── config/                    # 🔧 الإعدادات
-│   │   ├── environments/          # ملفات .env
+│   ├── config/                    # 🔧 Configuration
+│   │   ├── environments/          # .env files
 │   │   ├── database.config.ts
 │   │   ├── security.config.ts
 │   │   ├── stripe.config.ts
@@ -1717,18 +1717,18 @@ backend/
 │   │   ├── security/
 │   │   └── validation/
 │   │
-│   ├── modules/                   # 📦 الوحدات
+│   ├── modules/                   # 📦 Modules
 │   │   ├── api/v1/restful/        # RESTful API
-│   │   │   ├── controllers/       # منطق الـ Endpoints
-│   │   │   ├── routes/            # تعريف المسارات
-│   │   │   └── validators/        # مخططات التحقق
+│   │   │   ├── controllers/       # Endpoint logic
+│   │   │   ├── routes/            # Route definitions
+│   │   │   └── validators/        # Validation schemas
 │   │   │
-│   │   ├── auth/                  # 🔐 المصادقة
+│   │   ├── auth/                  # 🔐 Authentication
 │   │   │   ├── middlewares/       # role, subscription
 │   │   │   ├── routes/
 │   │   │   └── services/
 │   │   │
-│   │   ├── database/              # 🗄️ قواعد البيانات
+│   │   ├── database/              # 🗄️ Databases
 │   │   │   └── postgreSQL/
 │   │   │       ├── models/        # Sequelize Models
 │   │   │       └── services/      # Data Access Layer
@@ -1739,75 +1739,75 @@ backend/
 │   │   │
 │   │   └── cache/                 # ⚡ Redis Cache
 │   │
-│   └── utils/                     # 🔧 أدوات مساعدة
+│   └── utils/                     # 🔧 Utilities
 │       ├── errors/
 │       ├── hash.util.ts
 │       ├── jwt.util.ts
 │       ├── logger.util.ts
 │       └── responseHandler.util.ts
 │
-├── docs/                          # 📚 التوثيق
-├── logs/                          # 📝 السجلات
+├── docs/                          # 📚 Documentation
+├── logs/                          # 📝 Logs
 └── package.json
 ```
 
-**مبادئ التنظيم:**
-- **Separation of Concerns** - فصل المسؤوليات
-- **Modular Architecture** - بنية وحدوية
-- **Clear Naming** - تسمية واضحة
-- **Consistent Patterns** - أنماط متسقة
+**Organization Principles:**
+- **Separation of Concerns** - Separate responsibilities
+- **Modular Architecture** - Modular structure
+- **Clear Naming** - Clear naming conventions
+- **Consistent Patterns** - Consistent patterns
 
 ---
 
-## 📊 ملخص التنفيذ
+## 📊 Implementation Summary
 
-| المتطلب | الحالة | الملاحظات |
-|---------|--------|-----------|
-| User Registration | ✅ مكتمل | Local + Google OAuth2 |
-| JWT Authentication | ✅ مكتمل | Access + Refresh Tokens |
-| Role-based Access | ✅ مكتمل | Owner > Admin > User > Guest |
-| Subscription Plans | ✅ مكتمل | Stripe Integration |
-| Stripe Checkout | ✅ مكتمل | عبر Stripe Server |
-| Webhook Handling | ✅ مكتمل | كل الأحداث المطلوبة |
-| Access Control by Subscription | ✅ مكتمل | Middleware + DB Check |
-| Webhook Signature Verification | ✅ مكتمل | في Stripe Server |
-| Protected Dashboard | ✅ مكتمل | Auth + Subscription |
-| Search | ✅ مكتمل | Full-text search |
-| Pagination | ✅ مكتمل | Server-side |
-| Filtering | ✅ مكتمل | Multiple filters |
-| Admin View Users | ✅ مكتمل | With permissions |
-| Admin View Subscriptions | ✅ مكتمل | Per user + stats |
-| Admin Override | ✅ مكتمل | Cancel/Pause locally |
-| Environment Variables | ✅ مكتمل | Separated .env files |
-| Password Hashing | ✅ مكتمل | bcrypt |
-| Input Validation | ✅ مكتمل | Joi schemas |
-| Error Handling | ✅ مكتمل | Centralized handler |
-| Project Structure | ✅ مكتمل | Modular & clean |
+| Requirement | Status | Notes |
+|-------------|--------|-------|
+| User Registration | ✅ Complete | Local + Google OAuth2 |
+| JWT Authentication | ✅ Complete | Access + Refresh Tokens |
+| Role-based Access | ✅ Complete | Owner > Admin > User > Guest |
+| Subscription Plans | ✅ Complete | Stripe Integration |
+| Stripe Checkout | ✅ Complete | Via Stripe Server |
+| Webhook Handling | ✅ Complete | All required events |
+| Access Control by Subscription | ✅ Complete | Middleware + DB Check |
+| Webhook Signature Verification | ✅ Complete | In Stripe Server |
+| Protected Dashboard | ✅ Complete | Auth + Subscription |
+| Search | ✅ Complete | Full-text search |
+| Pagination | ✅ Complete | Server-side |
+| Filtering | ✅ Complete | Multiple filters |
+| Admin View Users | ✅ Complete | With permissions |
+| Admin View Subscriptions | ✅ Complete | Per user + stats |
+| Admin Override | ✅ Complete | Cancel/Pause locally |
+| Environment Variables | ✅ Complete | Separated .env files |
+| Password Hashing | ✅ Complete | bcrypt |
+| Input Validation | ✅ Complete | Joi schemas |
+| Error Handling | ✅ Complete | Centralized handler |
+| Project Structure | ✅ Complete | Modular & clean |
 
 ---
 
 ## 🛠️ Graceful Shutdown
 
-الخادم يدعم الإيقاف الآمن عند:
-- `SIGTERM` - إشارة إنهاء
+The server supports graceful shutdown on:
+- `SIGTERM` - Termination signal
 - `SIGINT` - Ctrl+C
-- `uncaughtException` - استثناء غير معالج
+- `uncaughtException` - Unhandled exception
 - `unhandledRejection` - Promise rejection
 
-### خطوات الإيقاف الآمن:
-1. إغلاق اتصال قاعدة البيانات
-2. إيقاف قبول اتصالات جديدة
-3. إغلاق الاتصالات النشطة
-4. إنهاء العملية
+### Graceful Shutdown Steps:
+1. Close database connection
+2. Stop accepting new connections
+3. Close active connections
+4. Terminate process
 
 ---
 
-## 📞 الدعم والتواصل
+## 📞 Support and Contact
 
-- **المؤلف:** El-khodary
-- **الإصدار:** 1.0.0
-- **الترخيص:** ISC
+- **Author:** El-khodary
+- **Version:** 1.0.0
+- **License:** ISC
 
 ---
 
-*آخر تحديث: يناير 2026*
+*Last Updated: January 2026*
