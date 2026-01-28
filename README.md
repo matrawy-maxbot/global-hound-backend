@@ -1,204 +1,204 @@
-# 📚 ملخص مشروع Global Hound - الدليل الشامل
+# 📚 Global Hound Project Summary - Comprehensive Guide
 
-## 📋 فهرس المحتويات
+## 📋 Table of Contents
 
-1. [نظرة عامة على المشروع](#-نظرة-عامة-على-المشروع)
-2. [التقنيات المستخدمة](#️-التقنيات-المستخدمة)
-3. [هيكل المشروع](#-هيكل-المشروع)
-4. [نظام المصادقة](#-نظام-المصادقة)
-5. [نظام الأدوار والصلاحيات](#-نظام-الأدوار-والصلاحيات)
-6. [نظام الاشتراكات والمدفوعات](#-نظام-الاشتراكات-والمدفوعات)
-7. [واجهات API](#-واجهات-api)
-8. [قواعد البيانات](#️-قواعد-البيانات)
-9. [الأمان والحماية](#-الأمان-والحماية)
-10. [الصفحات والمكونات](#-الصفحات-والمكونات)
-11. [تشغيل المشروع](#-تشغيل-المشروع)
-12. [ملخص التنفيذ](#-ملخص-التنفيذ)
-
----
-
-## 🎯 نظرة عامة على المشروع
-
-**Global Hound** هو مشروع متكامل يتكون من ثلاثة أجزاء رئيسية:
-
-| الجزء | الوصف | البورت |
-|-------|-------|--------|
-| **Backend** | خادم Node.js/Express للـ API الرئيسي | `3003` |
-| **Stripe Server** | خادم منفصل للتعامل مع Stripe | `4242` |
-| **Frontend** | تطبيق Next.js للواجهة الأمامية | `3000` |
-
-### 🔍 لماذا فصل Stripe Server؟
-
-تم فصل خادم Stripe عن الـ Backend الرئيسي لعدة أسباب مهمة:
-
-| السبب | التفاصيل |
-|-------|----------|
-| **🔒 الأمان (Security)** | عزل مفاتيح Stripe السرية في خادم منفصل يقلل من سطح الهجوم. إذا تم اختراق الـ Backend الرئيسي، تبقى مفاتيح الدفع آمنة |
-| **📦 العزل (Isolation)** | فصل منطق الدفع يمنع أي خلل في الـ Backend من التأثير على عمليات الدفع، والعكس صحيح |
-| **📈 التوسع (Scaling)** | يمكن توسيع خادم Stripe بشكل مستقل حسب حجم المعاملات دون الحاجة لتوسيع الـ Backend بالكامل |
-| **🔧 الصيانة** | تحديث أو صيانة نظام الدفع لا يتطلب إعادة تشغيل الـ Backend الرئيسي |
-| **🧪 الاختبار** | سهولة اختبار نظام الدفع بشكل منفصل |
-
-### الوظائف الرئيسية
-- ✅ نظام تسجيل ومصادقة (Local + Google OAuth)
-- ✅ نظام أدوار متعدد المستويات (Owner, Admin, User, Guest)
-- ✅ نظام اشتراكات مدفوعة عبر Stripe
-- ✅ لوحة تحكم للمستخدمين والمشرفين
-- ✅ نظام إدارة السيارات (كمثال للبيانات)
-- ✅ نظام تخزين مؤقت باستخدام Redis
+1. [Project Overview](#-project-overview)
+2. [Technologies Used](#️-technologies-used)
+3. [Project Structure](#-project-structure)
+4. [Authentication System](#-authentication-system)
+5. [Roles and Permissions System](#-roles-and-permissions-system)
+6. [Subscriptions and Payments System](#-subscriptions-and-payments-system)
+7. [API Interfaces](#-api-interfaces)
+8. [Databases](#️-databases)
+9. [Security and Protection](#-security-and-protection)
+10. [Pages and Components](#-pages-and-components)
+11. [Running the Project](#-running-the-project)
+12. [Implementation Summary](#-implementation-summary)
 
 ---
 
-## 🛠️ التقنيات المستخدمة
+## 🎯 Project Overview
+
+**Global Hound** is an integrated project consisting of three main parts:
+
+| Part | Description | Port |
+|------|-------------|------|
+| **Backend** | Node.js/Express server for the main API | `3003` |
+| **Stripe Server** | Separate server for handling Stripe | `4242` |
+| **Frontend** | Next.js application for the frontend | `3000` |
+
+### 🔍 Why Separate the Stripe Server?
+
+The Stripe server was separated from the main Backend for several important reasons:
+
+| Reason | Details |
+|--------|---------|
+| **🔒 Security** | Isolating Stripe secret keys in a separate server reduces the attack surface. If the main Backend is compromised, payment keys remain secure |
+| **📦 Isolation** | Separating payment logic prevents any Backend issues from affecting payment operations, and vice versa |
+| **📈 Scaling** | The Stripe server can be scaled independently based on transaction volume without needing to scale the entire Backend |
+| **🔧 Maintenance** | Updating or maintaining the payment system doesn't require restarting the main Backend |
+| **🧪 Testing** | Easy to test the payment system separately |
+
+### Main Features
+- ✅ Registration and authentication system (Local + Google OAuth)
+- ✅ Multi-level role system (Owner, Admin, User, Guest)
+- ✅ Paid subscription system via Stripe
+- ✅ Dashboard for users and administrators
+- ✅ Car management system (as a data example)
+- ✅ Caching system using Redis
+
+---
+
+## 🛠️ Technologies Used
 
 ### Backend Stack
 
-| التقنية | الوصف |
-|---------|-------|
-| Node.js | بيئة التشغيل |
-| Express.js | إطار عمل الويب |
-| TypeScript | لغة البرمجة |
-| PostgreSQL | قاعدة البيانات (Sequelize ORM) |
-| Redis | التخزين المؤقت والجلسات |
-| JWT | إدارة التوكنات |
-| Passport.js | المصادقة |
-| Winston | تسجيل الأحداث |
-| Joi | التحقق من البيانات |
+| Technology | Description |
+|------------|-------------|
+| Node.js | Runtime environment |
+| Express.js | Web framework |
+| TypeScript | Programming language |
+| PostgreSQL | Database (Sequelize ORM) |
+| Redis | Caching and sessions |
+| JWT | Token management |
+| Passport.js | Authentication |
+| Winston | Event logging |
+| Joi | Data validation |
 
 ### Frontend Stack
 
-| التقنية | الإصدار | الوصف |
-|---------|---------|-------|
-| Next.js | 16.1.4 | إطار عمل React |
-| React | 19.2.3 | مكتبة الواجهة |
-| TypeScript | ^5 | لغة البرمجة |
-| Tailwind CSS | ^4 | إطار التصميم |
-| @react-oauth/google | ^0.13.4 | مصادقة Google |
-| @stripe/stripe-js | ^8.6.4 | تكامل Stripe |
+| Technology | Version | Description |
+|------------|---------|-------------|
+| Next.js | 16.1.4 | React framework |
+| React | 19.2.3 | UI library |
+| TypeScript | ^5 | Programming language |
+| Tailwind CSS | ^4 | Design framework |
+| @react-oauth/google | ^0.13.4 | Google authentication |
+| @stripe/stripe-js | ^8.6.4 | Stripe integration |
 
 ### Stripe Server Stack
 
-| التقنية | الوصف |
-|---------|-------|
-| Node.js + Express | خادم المدفوعات |
-| Stripe SDK | معالجة المدفوعات |
-| Redis | تخزين مؤقت (اختياري) |
+| Technology | Description |
+|------------|-------------|
+| Node.js + Express | Payment server |
+| Stripe SDK | Payment processing |
+| Redis | Caching (optional) |
 
 ---
 
-## 📁 هيكل المشروع
+## 📁 Project Structure
 
 ```
 mvp/
-├── backend/                      # 🔧 الخادم الرئيسي
+├── backend/                      # 🔧 Main Server
 │   ├── src/
-│   │   ├── app.ts               # تطبيق Express
-│   │   ├── server.ts            # نقطة الدخول
-│   │   ├── config/              # الإعدادات
+│   │   ├── app.ts               # Express application
+│   │   ├── server.ts            # Entry point
+│   │   ├── config/              # Configuration
 │   │   ├── middlewares/         # Middlewares
 │   │   ├── modules/
 │   │   │   ├── api/             # RESTful API
-│   │   │   ├── auth/            # المصادقة
+│   │   │   ├── auth/            # Authentication
 │   │   │   ├── cache/           # Redis Cache
-│   │   │   ├── database/        # قواعد البيانات
-│   │   │   └── stripe/          # تكامل Stripe
-│   │   └── utils/               # أدوات مساعدة
-│   └── docs/                    # التوثيق
+│   │   │   ├── database/        # Databases
+│   │   │   └── stripe/          # Stripe integration
+│   │   └── utils/               # Helper utilities
+│   └── docs/                    # Documentation
 │
 ├── global-hound/                 # 🌐 Frontend
-│   ├── app/                     # صفحات Next.js
-│   │   ├── layout.tsx           # التخطيط الرئيسي
-│   │   ├── page.tsx             # الصفحة الرئيسية
-│   │   ├── login/               # تسجيل الدخول
-│   │   ├── register/            # التسجيل
-│   │   ├── account/             # الحساب
-│   │   ├── plans/               # الخطط
-│   │   ├── payment/             # الدفع
-│   │   ├── users/               # إدارة المستخدمين
-│   │   ├── admins/              # إدارة المشرفين
-│   │   └── cars/                # إدارة السيارات
-│   ├── components/              # المكونات
+│   ├── app/                     # Next.js pages
+│   │   ├── layout.tsx           # Main layout
+│   │   ├── page.tsx             # Home page
+│   │   ├── login/               # Login
+│   │   ├── register/            # Registration
+│   │   ├── account/             # Account
+│   │   ├── plans/               # Plans
+│   │   ├── payment/             # Payment
+│   │   ├── users/               # User management
+│   │   ├── admins/              # Admin management
+│   │   └── cars/                # Car management
+│   ├── components/              # Components
 │   ├── lib/                     # Context Providers
-│   └── docs/                    # التوثيق
+│   └── docs/                    # Documentation
 │
-└── docs/                        # 📚 الملخص العام
+└── docs/                        # 📚 General Summary
 ```
 
 ---
 
-## 🔐 نظام المصادقة
+## 🔐 Authentication System
 
-### طرق تسجيل الدخول
+### Login Methods
 
-| الطريقة | الوصف | API Endpoint |
-|---------|-------|--------------|
-| Local | إيميل + كلمة مرور | `POST /api/v1/auth/login/email` |
-| Google OAuth | تسجيل الدخول عبر Google | `POST /api/v1/auth/google` |
-| التسجيل | إنشاء حساب جديد | `POST /api/v1/auth/register` |
+| Method | Description | API Endpoint |
+|--------|-------------|--------------|
+| Local | Email + Password | `POST /api/v1/auth/login/email` |
+| Google OAuth | Login via Google | `POST /api/v1/auth/google` |
+| Registration | Create new account | `POST /api/v1/auth/register` |
 
-### نظام التوكنات (JWT)
+### Token System (JWT)
 
 ```typescript
-// توليد التوكنات
-Access Token  → صلاحية: 1 ساعة (قابلة للتعديل)
-Refresh Token → صلاحية: 7 أيام (قابلة للتعديل)
+// Token generation
+Access Token  → Validity: 1 hour (configurable)
+Refresh Token → Validity: 7 days (configurable)
 
-// التحقق والتجديد
-GET  /api/v1/auth/validate      → التحقق من صلاحية التوكن
-POST /api/v1/auth/refresh-token → تجديد Access Token
-GET  /api/v1/auth/me            → بيانات المستخدم الحالي
-POST /api/v1/auth/logout        → تسجيل الخروج
+// Validation and renewal
+GET  /api/v1/auth/validate      → Validate token
+POST /api/v1/auth/refresh-token → Refresh Access Token
+GET  /api/v1/auth/me            → Current user data
+POST /api/v1/auth/logout        → Logout
 ```
 
-### آلية التخزين (Frontend)
+### Storage Mechanism (Frontend)
 
 ```typescript
-// التخزين في localStorage
+// Storage in localStorage
 localStorage.setItem('token', accessToken);
 localStorage.setItem('refreshToken', refreshToken);
 
-// عند انتهاء الصلاحية (401) → محاولة تجديد تلقائي
+// On expiration (401) → Automatic refresh attempt
 ```
 
 ---
 
-## 👥 نظام الأدوار والصلاحيات
+## 👥 Roles and Permissions System
 
-### التسلسل الهرمي للأدوار
+### Role Hierarchy
 
-| الدور | المستوى | الوصف | الصلاحيات |
-|-------|---------|-------|-----------|
-| `owner` | 1 (أعلى) | مالك النظام | جميع الصلاحيات تلقائياً |
-| `admin` | 2 | مشرف | صلاحيات محددة قابلة للتخصيص |
-| `user` | 3 | مستخدم عادي | صلاحيات أساسية |
-| `guest` | 4 (أدنى) | زائر غير مصادق | قراءة محدودة |
+| Role | Level | Description | Permissions |
+|------|-------|-------------|-------------|
+| `owner` | 1 (Highest) | System owner | All permissions automatically |
+| `admin` | 2 | Administrator | Specific customizable permissions |
+| `user` | 3 | Regular user | Basic permissions |
+| `guest` | 4 (Lowest) | Unauthenticated visitor | Limited read access |
 
-### صلاحيات Admin المتاحة
+### Available Admin Permissions
 
-| الصلاحية | الوصف |
-|----------|-------|
-| `view_users` | عرض قائمة المستخدمين |
-| `view_cars` | عرض قائمة السيارات |
-| `create_cars` | إنشاء سيارات جديدة |
-| `update_cars` | تعديل بيانات السيارات |
-| `delete_cars` | حذف السيارات |
+| Permission | Description |
+|------------|-------------|
+| `view_users` | View user list |
+| `view_cars` | View car list |
+| `create_cars` | Create new cars |
+| `update_cars` | Edit car data |
+| `delete_cars` | Delete cars |
 
-### استخدام Middleware للأدوار
+### Using Role Middleware
 
 ```typescript
-// Backend - التحقق من الأدوار
+// Backend - Role verification
 checkRole(['owner', 'admin'], ['view_users'])
 
-// Frontend - التحقق في React
+// Frontend - Verification in React
 const { isOwner, isAdmin, hasPermission } = useAuth();
-if (hasPermission('view_users')) { /* عرض المحتوى */ }
+if (hasPermission('view_users')) { /* Display content */ }
 ```
 
 ---
 
-## 💳 نظام الاشتراكات والمدفوعات
+## 💳 Subscriptions and Payments System
 
-### هيكل النظام
+### System Architecture
 
 ```
 ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
@@ -210,77 +210,77 @@ if (hasPermission('view_users')) { /* عرض المحتوى */ }
             stripe.confirmCardPayment()
 ```
 
-### تدفق الاشتراك
+### Subscription Flow
 
-1. **جلب الخطط** → `GET /api/v1/plans/subscription-prices`
-2. **إنشاء/جلب عميل Stripe** → `POST /api/v1/customers/get-or-create`
-3. **إنشاء اشتراك** → `POST /api/v1/plans/subscriptions`
-4. **تأكيد الدفع** → `stripe.confirmCardPayment(clientSecret)`
-5. **حفظ في DB** → `POST /api/v1/subscriptions`
+1. **Fetch Plans** → `GET /api/v1/plans/subscription-prices`
+2. **Create/Fetch Stripe Customer** → `POST /api/v1/customers/get-or-create`
+3. **Create Subscription** → `POST /api/v1/plans/subscriptions`
+4. **Confirm Payment** → `stripe.confirmCardPayment(clientSecret)`
+5. **Save to DB** → `POST /api/v1/subscriptions`
 
-### حالات الاشتراك
+### Subscription Statuses
 
-| الحالة | الوصف | الوصول مسموح؟ |
-|--------|-------|--------------|
-| `active` | اشتراك نشط | ✅ نعم |
-| `trialing` | فترة تجريبية | ✅ نعم |
-| `past_due` | متأخر السداد | ⚠️ محدود |
-| `canceled` | ملغي | ❌ لا |
-| `unpaid` | غير مدفوع | ❌ لا |
-| `paused` | موقوف مؤقتاً | ❌ لا |
-| `incomplete` | غير مكتمل | ❌ لا |
+| Status | Description | Access Allowed? |
+|--------|-------------|-----------------|
+| `active` | Active subscription | ✅ Yes |
+| `trialing` | Trial period | ✅ Yes |
+| `past_due` | Payment overdue | ⚠️ Limited |
+| `canceled` | Canceled | ❌ No |
+| `unpaid` | Unpaid | ❌ No |
+| `paused` | Temporarily paused | ❌ No |
+| `incomplete` | Incomplete | ❌ No |
 
-### Stripe Webhooks المدعومة
+### Supported Stripe Webhooks
 
-| الحدث | الإجراء |
-|-------|---------|
-| `customer.subscription.created` | مزامنة مع DB المحلية |
-| `customer.subscription.updated` | تحديث الحالة |
-| `customer.subscription.deleted` | تحديث إلى canceled |
-| `invoice.payment_succeeded` | تسجيل نجاح الدفع |
-| `invoice.payment_failed` | تسجيل وإشعار |
+| Event | Action |
+|-------|--------|
+| `customer.subscription.created` | Sync with local DB |
+| `customer.subscription.updated` | Update status |
+| `customer.subscription.deleted` | Update to canceled |
+| `invoice.payment_succeeded` | Record payment success |
+| `invoice.payment_failed` | Record and notify |
 
-### بطاقات الاختبار
+### Test Cards
 
-| رقم البطاقة | الوصف |
-|-------------|-------|
-| `4242424242424242` | بطاقة ناجحة |
-| `4000002500003155` | تتطلب 3D Secure |
-| `4000000000000002` | بطاقة مرفوضة |
+| Card Number | Description |
+|-------------|-------------|
+| `4242424242424242` | Successful card |
+| `4000002500003155` | Requires 3D Secure |
+| `4000000000000002` | Declined card |
 
-### 🛡️ آلية التحقق من الاشتراك (Subscription Check)
+### 🛡️ Subscription Check Mechanism
 
-يتم فرض التحقق من الاشتراك عبر **Middleware** مخصص:
+Subscription verification is enforced via a custom **Middleware**:
 
 ```typescript
 // subscription.middleware.ts
 export const checkSubscription = (
-  applyToRoles: UserRole[] = ['user'],  // الأدوار التي تحتاج اشتراك
-  allowedPlans: string[],                // الخطط المسموحة
+  applyToRoles: UserRole[] = ['user'],  // Roles that need subscription
+  allowedPlans: string[],                // Allowed plans
   options: { verifyFromStripe?: boolean } = { verifyFromStripe: true }
 ): RequestHandler => { ... }
 ```
 
-#### كيف يعمل؟
+#### How Does It Work?
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                     طلب للمسار المحمي                           │
+│                     Request to protected route                  │
 └─────────────────────────────┬───────────────────────────────────┘
                               │
                               ▼
                     ┌─────────────────┐
-                    │  checkRole()    │  ← التحقق من الدور أولاً
+                    │  checkRole()    │  ← Verify role first
                     └────────┬────────┘
                              │
                              ▼
               ┌──────────────────────────────┐
               │     checkSubscription()      │
               │  ┌────────────────────────┐  │
-              │  │ 1. Owner؟ → تجاوز ✅    │  │
-              │  │ 2. الدور يحتاج اشتراك؟ │  │
-              │  │ 3. التحقق من Stripe    │  │
-              │  │ 4. التحقق من DB محلي   │  │
+              │  │ 1. Owner? → Bypass ✅   │  │
+              │  │ 2. Role needs sub?     │  │
+              │  │ 3. Verify from Stripe  │  │
+              │  │ 4. Verify from local DB│  │
               │  └────────────────────────┘  │
               └──────────────┬───────────────┘
                              │
@@ -294,154 +294,154 @@ export const checkSubscription = (
                                   └─────────────────┘
 ```
 
-#### التحقق المزدوج (Dual Verification)
+#### Dual Verification
 
 ```typescript
-// يتحقق من Stripe أولاً، ثم من DB المحلية
-// لماذا؟ لأن Admin قد يلغي اشتراك يدوياً (Admin Override)
+// Verifies from Stripe first, then from local DB
+// Why? Because Admin may manually cancel a subscription (Admin Override)
 
 const [stripeSubscription] = await stripeService.getSubscription(subId);
 const [localSubscription] = await SubscriptionsService.getByStripeId(subId);
 
-// إذا كان ملغى محلياً → رفض حتى لو نشط في Stripe
+// If canceled locally → Reject even if active in Stripe
 if (localSubscription?.status === 'canceled' || localSubscription?.status === 'paused') {
   return false;  // Admin Override
 }
 ```
 
-#### مثال الاستخدام في Routes
+#### Usage Example in Routes
 
 ```typescript
-// مسار يتطلب اشتراك "Pro" أو "Enterprise"
+// Route that requires "Pro" or "Enterprise" subscription
 router.get(
   '/cars',
-  checkRole(['owner', 'admin', 'user']),           // 1. تحقق من الدور
-  checkSubscription(['user'], ['Pro', 'Enterprise']), // 2. تحقق من الاشتراك
+  checkRole(['owner', 'admin', 'user']),           // 1. Check role
+  checkSubscription(['user'], ['Pro', 'Enterprise']), // 2. Check subscription
   carsController.getAllCars
 );
 ```
 
-### 📨 Raw Body للـ Webhook (مهم جداً!)
+### 📨 Raw Body for Webhook (Very Important!)
 
-⚠️ **تنبيه حرج:** يجب استخدام **Raw Body** (غير معالج) لـ Webhook endpoint لأن Stripe يوقّع الـ request body الخام.
+⚠️ **Critical Warning:** You must use **Raw Body** (unprocessed) for the Webhook endpoint because Stripe signs the raw request body.
 
-#### المشكلة
+#### The Problem
 
 ```typescript
-// ❌ خطأ - express.json() يحول الـ body
-app.use(express.json());  // هذا يكسر التوقيع!
+// ❌ Wrong - express.json() transforms the body
+app.use(express.json());  // This breaks the signature!
 
-// Stripe يحسب التوقيع من:
+// Stripe calculates the signature from:
 // signature = HMAC-SHA256(raw_body, webhook_secret)
-// لكن express.json() يحول الـ body لـ object ثم يعيده كـ string مختلف
+// But express.json() converts the body to an object then back to a different string
 ```
 
-#### الحل
+#### The Solution
 
 ```typescript
-// ✅ صحيح - استخدام express.raw() للـ webhook فقط
+// ✅ Correct - Use express.raw() for webhook only
 
-// 1. تعريف webhook route قبل express.json()
+// 1. Define webhook route before express.json()
 app.post(
   '/api/webhooks',
   express.raw({ type: 'application/json' }),  // ← Raw body
   webhookHandler
 );
 
-// 2. ثم تطبيق express.json() للباقي
+// 2. Then apply express.json() for the rest
 app.use(express.json());
 ```
 
-#### التحقق من التوقيع
+#### Signature Verification
 
 ```typescript
-// في webhook handler
+// In webhook handler
 const sig = req.headers['stripe-signature'] as string;
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 try {
-  // req.body هنا هو Buffer (raw)
+  // req.body here is Buffer (raw)
   const event = stripe.webhooks.constructEvent(
     req.body,      // ← Must be raw Buffer, not parsed JSON
     sig,
     endpointSecret
   );
   
-  // معالجة الحدث...
+  // Process the event...
 } catch (err) {
   console.error('❌ Webhook signature verification failed');
   return res.status(400).send(`Webhook Error: ${err.message}`);
 }
 ```
 
-#### لماذا هذا مهم؟
+#### Why Is This Important?
 
-| بدون Raw Body | مع Raw Body |
-|---------------|-------------|
-| ❌ التوقيع لا يتطابق | ✅ التوقيع صحيح |
+| Without Raw Body | With Raw Body |
+|------------------|---------------|
+| ❌ Signature doesn't match | ✅ Signature is correct |
 | ❌ 400 Webhook Error | ✅ 200 Success |
-| ❌ الأحداث لا تُعالج | ✅ المزامنة تعمل |
-| ❌ ثغرة أمنية محتملة | ✅ حماية من التزوير |
+| ❌ Events not processed | ✅ Sync works |
+| ❌ Potential security vulnerability | ✅ Protection from forgery |
 
 ---
 
-## 🌐 واجهات API
+## 🌐 API Interfaces
 
 ### Backend API (Port 3003)
 
-#### المصادقة (`/api/v1/auth`)
+#### Authentication (`/api/v1/auth`)
 
-| Method | المسار | الوصف |
-|--------|--------|-------|
-| POST | `/register` | تسجيل مستخدم جديد |
-| POST | `/login/email` | تسجيل الدخول |
-| POST | `/google` | تسجيل الدخول عبر Google |
-| POST | `/refresh-token` | تجديد التوكن |
-| GET | `/validate` | التحقق من التوكن |
-| GET | `/me` | بيانات المستخدم |
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/register` | Register new user |
+| POST | `/login/email` | Login |
+| POST | `/google` | Login via Google |
+| POST | `/refresh-token` | Refresh token |
+| GET | `/validate` | Validate token |
+| GET | `/me` | User data |
 
-#### المستخدمين (`/api/v1/users`)
+#### Users (`/api/v1/users`)
 
-| Method | المسار | الصلاحيات |
-|--------|--------|-----------|
+| Method | Path | Permissions |
+|--------|------|-------------|
 | GET | `/` | owner, admin (view_users) |
 | GET | `/:id` | owner, admin (view_users) |
 | PUT | `/:id` | owner |
 | DELETE | `/:id` | owner |
 
-#### الاشتراكات (`/api/v1/subscriptions`)
+#### Subscriptions (`/api/v1/subscriptions`)
 
-| Method | المسار | الصلاحيات |
-|--------|--------|-----------|
+| Method | Path | Permissions |
+|--------|------|-------------|
 | GET | `/` | owner, admin |
-| GET | `/me` | مصادق |
-| POST | `/me/cancel` | مصادق |
+| GET | `/me` | authenticated |
+| POST | `/me/cancel` | authenticated |
 | GET | `/user/:userId` | owner, admin |
 | GET | `/statistics` | owner |
 
-#### الخطط (`/api/v1/plans`)
+#### Plans (`/api/v1/plans`)
 
-| Method | المسار | الصلاحيات |
-|--------|--------|-----------|
-| GET | `/config` | عام |
-| GET | `/prices` | عام |
-| GET | `/subscription-prices` | عام |
-| POST | `/subscriptions` | مصادق |
+| Method | Path | Permissions |
+|--------|------|-------------|
+| GET | `/config` | public |
+| GET | `/prices` | public |
+| GET | `/subscription-prices` | public |
+| POST | `/subscriptions` | authenticated |
 
-#### السيارات (`/api/v1/cars`)
+#### Cars (`/api/v1/cars`)
 
-| Method | المسار | الصلاحيات |
-|--------|--------|-----------|
-| GET | `/` | مصادق + اشتراك |
-| GET | `/:id` | مصادق + اشتراك |
+| Method | Path | Permissions |
+|--------|------|-------------|
+| GET | `/` | authenticated + subscription |
+| GET | `/:id` | authenticated + subscription |
 | POST | `/` | owner, admin (create_cars) |
 | PUT | `/:id` | owner, admin (update_cars) |
 | DELETE | `/:id` | owner, admin (delete_cars) |
 
-#### مشرفي المشاريع (`/api/v1/project-admins`)
+#### Project Admins (`/api/v1/project-admins`)
 
-| Method | المسار | الصلاحيات |
-|--------|--------|-----------|
+| Method | Path | Permissions |
+|--------|------|-------------|
 | GET | `/` | owner |
 | POST | `/` | owner |
 | PUT | `/:id` | owner |
@@ -451,47 +451,47 @@ try {
 
 ### Stripe Server API (Port 4242)
 
-#### العملاء (`/api/customers`)
+#### Customers (`/api/customers`)
 
-| Method | المسار | الوصف |
-|--------|--------|-------|
-| POST | `/` | إنشاء عميل |
-| GET | `/:id` | جلب عميل |
-| PUT | `/:id` | تحديث عميل |
-| DELETE | `/:id` | حذف عميل |
-| GET | `/:id/payment-methods` | طرق الدفع |
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/` | Create customer |
+| GET | `/:id` | Get customer |
+| PUT | `/:id` | Update customer |
+| DELETE | `/:id` | Delete customer |
+| GET | `/:id/payment-methods` | Payment methods |
 
-#### المدفوعات (`/api/payments`)
+#### Payments (`/api/payments`)
 
-| Method | المسار | الوصف |
-|--------|--------|-------|
-| POST | `/intents` | إنشاء Payment Intent |
-| GET | `/intents/:id` | جلب Payment Intent |
-| POST | `/intents/:id/confirm` | تأكيد الدفع |
-| POST | `/intents/:id/cancel` | إلغاء الدفع |
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/intents` | Create Payment Intent |
+| GET | `/intents/:id` | Get Payment Intent |
+| POST | `/intents/:id/confirm` | Confirm payment |
+| POST | `/intents/:id/cancel` | Cancel payment |
 
-#### الاشتراكات (`/api/subscriptions`)
+#### Subscriptions (`/api/subscriptions`)
 
-| Method | المسار | الوصف |
-|--------|--------|-------|
-| POST | `/` | إنشاء اشتراك |
-| GET | `/` | قائمة الاشتراكات |
-| GET | `/:id` | تفاصيل اشتراك |
-| DELETE | `/:id` | إلغاء اشتراك |
-| POST | `/:id/pause` | إيقاف مؤقت |
-| POST | `/:id/resume` | استئناف |
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/` | Create subscription |
+| GET | `/` | List subscriptions |
+| GET | `/:id` | Subscription details |
+| DELETE | `/:id` | Cancel subscription |
+| POST | `/:id/pause` | Pause subscription |
+| POST | `/:id/resume` | Resume subscription |
 
-#### الاستردادات (`/api/refunds`)
+#### Refunds (`/api/refunds`)
 
-| Method | المسار | الوصف |
-|--------|--------|-------|
-| POST | `/` | إنشاء استرداد |
-| POST | `/full` | استرداد كامل |
-| POST | `/partial` | استرداد جزئي |
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/` | Create refund |
+| POST | `/full` | Full refund |
+| POST | `/partial` | Partial refund |
 
 ---
 
-## 🗄️ قواعد البيانات
+## 🗄️ Databases
 
 ### PostgreSQL Models
 
@@ -500,8 +500,8 @@ try {
 ```typescript
 interface User {
   id: string;              // UUID
-  email: string;           // فريد
-  password_hash?: string;  // للتسجيل المحلي
+  email: string;           // Unique
+  password_hash?: string;  // For local registration
   auth_provider: 'local' | 'google';
   google_id?: string;
   first_name?: string;
@@ -542,7 +542,7 @@ interface Car {
   car_make: string;     // BMW, Toyota
   car_model: string;    // 325, Camry
   car_model_year: number;
-  car_vin: string;      // 17 حرف، فريد
+  car_vin: string;      // 17 characters, unique
   created_at: Date;
   updated_at: Date;
 }
@@ -554,7 +554,7 @@ interface Car {
 interface ProjectAdmin {
   id: string;
   user_id: string;
-  permissions: string[];  // قائمة الصلاحيات
+  permissions: string[];  // List of permissions
   created_at: Date;
   updated_at: Date;
 }
@@ -562,34 +562,34 @@ interface ProjectAdmin {
 
 ---
 
-## 🔒 الأمان والحماية
+## 🔒 Security and Protection
 
-### ميزات الأمان المُطبقة
+### Implemented Security Features
 
-| الميزة | الوصف |
-|--------|-------|
-| **Helmet** | حماية HTTP Headers |
-| **CORS** | التحكم في Origins المسموح بها |
-| **Rate Limiting** | حماية من DDoS و Brute Force |
-| **XSS Protection** | تنظيف المدخلات من أكواد XSS |
-| **JWT Authentication** | مصادقة آمنة بالتوكنات |
-| **Password Hashing** | تشفير bcrypt |
-| **Secure Sessions** | جلسات Redis مع HttpOnly Cookies |
-| **Input Validation** | التحقق باستخدام Joi |
-| **Webhook Signature** | التحقق من توقيع Stripe |
+| Feature | Description |
+|---------|-------------|
+| **Helmet** | HTTP Headers protection |
+| **CORS** | Control of allowed Origins |
+| **Rate Limiting** | Protection from DDoS and Brute Force |
+| **XSS Protection** | Input sanitization from XSS code |
+| **JWT Authentication** | Secure token-based authentication |
+| **Password Hashing** | bcrypt encryption |
+| **Secure Sessions** | Redis sessions with HttpOnly Cookies |
+| **Input Validation** | Validation using Joi |
+| **Webhook Signature** | Stripe signature verification |
 
 ### Rate Limiters
 
-| النوع | الحد | الاستخدام |
-|-------|------|-----------|
-| `authRateLimiter` | 5 طلبات / 15 دقيقة | تسجيل الدخول |
-| `generalRateLimiter` | 100 طلب / 15 دقيقة | الطلبات العامة |
-| `strictRateLimiter` | 10 طلبات / 5 دقائق | الطلبات الحساسة |
+| Type | Limit | Usage |
+|------|-------|-------|
+| `authRateLimiter` | 5 requests / 15 minutes | Login |
+| `generalRateLimiter` | 100 requests / 15 minutes | General requests |
+| `strictRateLimiter` | 10 requests / 5 minutes | Sensitive requests |
 
-### متغيرات البيئة
+### Environment Variables
 
-| الملف | المحتوى |
-|-------|---------|
+| File | Content |
+|------|---------|
 | `Security.env` | JWT_SECRET, API_KEY, CORS |
 | `Database.env` | PostgreSQL, Redis |
 | `Stripe.env` | Stripe Keys & Secrets |
@@ -597,27 +597,27 @@ interface ProjectAdmin {
 
 ---
 
-## 📄 الصفحات والمكونات
+## 📄 Pages and Components
 
-### صفحات Frontend
+### Frontend Pages
 
-| الصفحة | المسار | الوصف | الوصول |
-|--------|--------|-------|--------|
-| الرئيسية | `/` | صفحة الهبوط | عام |
-| تسجيل الدخول | `/login` | نموذج الدخول | غير مصادق |
-| التسجيل | `/register` | نموذج التسجيل | غير مصادق |
-| الحساب | `/account` | لوحة التحكم | مصادق |
-| الخطط | `/plans` | عرض الخطط | عام |
-| الدفع | `/payment` | نموذج الدفع | مصادق |
-| نجاح الدفع | `/payment/success` | تأكيد النجاح | مصادق |
-| المستخدمين | `/users` | إدارة المستخدمين | owner, admin |
-| المشرفين | `/admins` | إدارة المشرفين | owner |
-| السيارات | `/cars` | إدارة السيارات | مصادق + اشتراك |
+| Page | Path | Description | Access |
+|------|------|-------------|--------|
+| Home | `/` | Landing page | public |
+| Login | `/login` | Login form | unauthenticated |
+| Register | `/register` | Registration form | unauthenticated |
+| Account | `/account` | Dashboard | authenticated |
+| Plans | `/plans` | Display plans | public |
+| Payment | `/payment` | Payment form | authenticated |
+| Payment Success | `/payment/success` | Success confirmation | authenticated |
+| Users | `/users` | User management | owner, admin |
+| Admins | `/admins` | Admin management | owner |
+| Cars | `/cars` | Car management | authenticated + subscription |
 
 ### Context Providers
 
 ```typescript
-// AuthProvider - سياق المصادقة
+// AuthProvider - Authentication context
 interface AuthContextType {
   user: AuthUser | null;
   token: string | null;
@@ -634,46 +634,46 @@ interface AuthContextType {
   refreshUser: () => Promise<void>;
 }
 
-// GoogleAuthProvider - مصادقة Google
-// يغلف التطبيق بـ GoogleOAuthProvider
+// GoogleAuthProvider - Google authentication
+// Wraps the application with GoogleOAuthProvider
 ```
 
 ---
 
-## 🚀 تشغيل المشروع
+## 🚀 Running the Project
 
-### المتطلبات
+### Requirements
 
 - Node.js >= 18
 - PostgreSQL
-- Redis (اختياري)
-- حساب Stripe (Test Mode)
-- حساب Google Cloud (OAuth)
+- Redis (optional)
+- Stripe account (Test Mode)
+- Google Cloud account (OAuth)
 
-### تشغيل Backend
+### Running Backend
 
 ```bash
 cd backend
 npm install
-npm run dev    # تطوير
-npm run build  # بناء
-npm start      # إنتاج
+npm run dev    # Development
+npm run build  # Build
+npm start      # Production
 ```
 
-### تشغيل Frontend
+### Running Frontend
 
 ```bash
 cd global-hound
 npm install
-npm run dev    # تطوير على localhost:3000
-npm run build  # بناء الإنتاج
-npm start      # تشغيل الإنتاج
+npm run dev    # Development on localhost:3000
+npm run build  # Production build
+npm start      # Run production
 ```
 
-### نقاط الوصول
+### Access Points
 
-| الخدمة | URL |
-|--------|-----|
+| Service | URL |
+|---------|-----|
 | Backend API | `http://localhost:3003/api/v1` |
 | Backend Health | `http://localhost:3003/health` |
 | Stripe Server | `http://localhost:4242/api` |
@@ -681,35 +681,35 @@ npm start      # تشغيل الإنتاج
 
 ---
 
-## ✅ ملخص التنفيذ
+## ✅ Implementation Summary
 
-### المتطلبات المكتملة
+### Completed Requirements
 
-| المتطلب | الحالة |
-|---------|--------|
-| تسجيل المستخدمين (Local + Google) | ✅ |
-| مصادقة JWT (Access + Refresh) | ✅ |
-| نظام الأدوار (Owner > Admin > User > Guest) | ✅ |
-| خطط اشتراك مدفوعة | ✅ |
-| تكامل Stripe Checkout | ✅ |
-| معالجة Webhooks | ✅ |
-| التحكم بالوصول حسب الاشتراك | ✅ |
-| التحقق من توقيع Webhook | ✅ |
-| لوحة تحكم محمية | ✅ |
-| البحث والفلترة | ✅ |
-| الترقيم (Pagination) | ✅ |
-| لوحة تحكم Admin | ✅ |
-| عرض حالة الاشتراكات | ✅ |
-| إلغاء/إيقاف يدوي (Admin Override) | ✅ |
-| متغيرات البيئة للأسرار | ✅ |
-| تشفير كلمات المرور | ✅ |
-| التحقق من المدخلات | ✅ |
-| معالجة الأخطاء | ✅ |
-| هيكل مشروع منظم | ✅ |
+| Requirement | Status |
+|-------------|--------|
+| User registration (Local + Google) | ✅ |
+| JWT authentication (Access + Refresh) | ✅ |
+| Role system (Owner > Admin > User > Guest) | ✅ |
+| Paid subscription plans | ✅ |
+| Stripe Checkout integration | ✅ |
+| Webhooks processing | ✅ |
+| Access control based on subscription | ✅ |
+| Webhook signature verification | ✅ |
+| Protected dashboard | ✅ |
+| Search and filtering | ✅ |
+| Pagination | ✅ |
+| Admin dashboard | ✅ |
+| Subscription status display | ✅ |
+| Manual cancel/pause (Admin Override) | ✅ |
+| Environment variables for secrets | ✅ |
+| Password encryption | ✅ |
+| Input validation | ✅ |
+| Error handling | ✅ |
+| Organized project structure | ✅ |
 
 ---
 
-## 📊 مخطط التواصل بين الأجزاء
+## 📊 Communication Diagram Between Components
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
@@ -751,12 +751,12 @@ npm start      # تشغيل الإنتاج
 
 ---
 
-## 📞 الدعم والتواصل
+## 📞 Support and Contact
 
-- **المؤلف:** El-khodary
-- **الإصدار:** 1.0.0
-- **الترخيص:** ISC
+- **Author:** El-khodary
+- **Version:** 1.0.0
+- **License:** ISC
 
 ---
 
-*آخر تحديث: يناير 2026*
+*Last updated: January 2026*
