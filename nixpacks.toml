@@ -5,7 +5,7 @@ nixPkgs = ["nodejs_20"]
 
 [phases.install]
 dependsOn = ["setup"]
-cmds = ["npm ci || npm install"]
+cmds = ["npm install"]
 
 [phases.build]
 dependsOn = ["install"]
