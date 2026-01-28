@@ -1,7 +1,6 @@
 # Logs
 # Global ignore patterns for requested extensions
 *.log
-*.json
 *.env
 */*.env
 logs

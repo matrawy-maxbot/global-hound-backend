@@ -1,0 +1,46 @@
+{
+	"info": {
+		"_postman_id": "ad01ec8d-0adb-4860-b953-675baf0d8007",
+		"name": "DiscordBotProject",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5368053"
+	},
+	"item": [
+		{
+			"name": "healthCheck",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{vault:auth}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"students\": [\r\n    {\r\n      \"studentid\": \"S001\",\r\n      \"major\": \"علوم الحاسب\",\r\n      \"section\": \"1\",\r\n      \"maxhours\": 21,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S002\",\r\n      \"major\": \"نظم المعلومات\",\r\n      \"section\": \"2\",\r\n      \"maxhours\": 21,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S003\",\r\n      \"major\": \"علوم الحاسب\",\r\n      \"section\": \"1\",\r\n      \"maxhours\": 18,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S004\",\r\n      \"major\": \"الذكاء الاصطناعي\",\r\n      \"section\": \"3\",\r\n      \"maxhours\": 24,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S005\",\r\n      \"major\": \"هندسة البرمجيات\",\r\n      \"section\": \"2\",\r\n      \"maxhours\": 21,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S006\",\r\n      \"major\": \"نظم المعلومات\",\r\n      \"section\": \"1\",\r\n      \"maxhours\": 18,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S007\",\r\n      \"major\": \"علوم الحاسب\",\r\n      \"section\": \"3\",\r\n      \"maxhours\": 21,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S008\",\r\n      \"major\": \"الذكاء الاصطناعي\",\r\n      \"section\": \"2\",\r\n      \"maxhours\": 24,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S009\",\r\n      \"major\": \"علوم الحاسب\",\r\n      \"section\": \"1\",\r\n      \"maxhours\": 18,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S010\",\r\n      \"major\": \"نظم المعلومات\",\r\n      \"section\": \"3\",\r\n      \"maxhours\": 21,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S011\",\r\n      \"major\": \"علوم الحاسب\",\r\n      \"section\": \"2\",\r\n      \"maxhours\": 21,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S012\",\r\n      \"major\": \"نظم المعلومات\",\r\n      \"section\": \"1\",\r\n      \"maxhours\": 18,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S013\",\r\n      \"major\": \"الذكاء الاصطناعي\",\r\n      \"section\": \"3\",\r\n      \"maxhours\": 24,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S014\",\r\n      \"major\": \"هندسة البرمجيات\",\r\n      \"section\": \"2\",\r\n      \"maxhours\": 21,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S015\",\r\n      \"major\": \"علوم الحاسب\",\r\n      \"section\": \"1\",\r\n      \"maxhours\": 18,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S016\",\r\n      \"major\": \"نظم المعلومات\",\r\n      \"section\": \"3\",\r\n      \"maxhours\": 21,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S017\",\r\n      \"major\": \"علوم الحاسب\",\r\n      \"section\": \"2\",\r\n      \"maxhours\": 18,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S018\",\r\n      \"major\": \"الذكاء الاصطناعي\",\r\n      \"section\": \"1\",\r\n      \"maxhours\": 24,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S019\",\r\n      \"major\": \"هندسة البرمجيات\",\r\n      \"section\": \"3\",\r\n      \"maxhours\": 18,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    },\r\n    {\r\n      \"studentid\": \"S020\",\r\n      \"major\": \"نظم المعلومات\",\r\n      \"section\": \"2\",\r\n      \"maxhours\": 21,\r\n      \"registerationaccess\": true,\r\n      \"platformaccess\": true\r\n    }\r\n  ]\r\n} "
+				},
+				"url": {
+					"raw": "http://localhost:3000/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
