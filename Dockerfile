@@ -1,37 +1,38 @@
-# Use Node.js 20 LTS
+# ======================
+# Builder stage
+# ======================
 FROM node:20-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# نسخ package.json من backend
+COPY backend/package*.json ./
 
-# Install dependencies
 RUN npm install
 
-# Copy source files
-COPY . .
+# نسخ باقي ملفات backend
+COPY backend .
 
-# Build the application
+# Build (TypeScript → dist)
 RUN npm run build
 
+
+# ======================
 # Production stage
+# ======================
 FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# نسخ package.json مرة تانية
+COPY backend/package*.json ./
 
-# Install only production dependencies
 RUN npm install --omit=dev
 
-# Copy built files from builder stage
+# نسخ build الناتج
 COPY --from=builder /app/dist ./dist
 
-# Expose port (Railway will override this with PORT env variable)
 EXPOSE 3000
 
-# Start the application
+# شغل السيرفر
 CMD ["npm", "run", "start"]
