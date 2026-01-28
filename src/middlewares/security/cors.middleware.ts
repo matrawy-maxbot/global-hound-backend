@@ -40,7 +40,7 @@ const originValidator = (origin: string | undefined, callback: CorsCallback): vo
     }
 
     // التحقق من الـ Origin
-    if (CORS_ORIGIN.includes(origin) || CORS_ORIGIN.includes('*')) {
+    if (process.env.CORS_ORIGIN.includes(origin) || process.env.CORS_ORIGIN.includes('*')) {
         corsStats.allowed++;
         callback(null, true);
     } else {
@@ -48,7 +48,7 @@ const originValidator = (origin: string | undefined, callback: CorsCallback): vo
         
         console.warn('🚫 CORS Policy Violation:', {
             blocked_origin: origin,
-            allowed_origins: CORS_ORIGIN,
+            allowed_origins: process.env.CORS_ORIGIN,
             timestamp: new Date().toISOString(),
             environment: NODE_ENV
         });
